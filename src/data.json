@@ -1,0 +1,86 @@
+{
+  "boxes": [
+    {
+      "id": "box_rows_columns_example",
+      "header": {
+        "caption": "Test",
+        "position": {
+          "top": 10,
+          "left": 100
+        },
+        "size": {
+          "width": 345,
+          "height": 523
+        }
+      },
+      "body": {
+        "rows": [
+          {
+            "columns": [
+              {
+                "item": {
+                  "box_id": "item1",
+                  "caption": "aaa",
+                  "box_links": [
+                    {
+                      "link": {
+                        "typelink": 1,
+                        "box_id": "box_json_example:item1"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "box_json_example",
+      "header": {
+        "caption": "Test2",
+        "position": {
+          "top": 10,
+          "left": 600
+        },
+        "size": {
+          "width": 345,
+          "height": 523
+        }
+      },
+      "body": {
+        "json": {
+          "type": "basket",
+          "beans": 47,
+          "apples": 7,
+          "oranges": 23,
+          "brand": "ConvertSimple",
+          "ratio": {
+            "box_id": "item1"
+          },
+          "fees": {
+            "cleaning": "$4.50",
+            "baking": "$27.30",
+            "commission": {
+              "box_links": [
+                {
+                  "link": {
+                    "typelink": 2,
+                    "box_id": "box_rows_columns_example:item1"
+                  }
+                }
+              ]
+            },
+            "descriptors": [
+              "clean",
+              "fresh",
+              "juicy",
+              "delicious"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

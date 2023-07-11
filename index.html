@@ -1,0 +1,170 @@
+<!--
+  Copyright (c) 2006-2018, JGraph Ltd
+  
+  Hello, World! example for mxGraph. This example demonstrates using
+  a DOM node to create a graph and adding vertices and edges.
+-->
+<html>
+<head>
+    <title>Hello, World! example for mxGraph</title>
+
+    <!-- Sets the basepath for the library if not in same directory -->
+    <script type="text/javascript">
+        mxBasePath = '../src';
+    </script>
+
+    <!-- Loads and initializes the library -->
+    <script type="text/javascript" src="src/js/mxClient.js"></script>
+
+    <!-- Example code -->
+    <script type="text/javascript">
+        // Program starts here. Creates a sample graph in the
+        // DOM node with the specified ID. This function is invoked
+        // from the onLoad event handler of the document (see below).
+
+        function main(container) {
+            // Checks if the browser is supported
+            if (!mxClient.isBrowserSupported()) {
+                // Displays an error message if the browser is not supported.
+                mxUtils.error('Browser is not supported!', 200, false);
+            } else {
+                var data = {
+                    "boxes": [
+                        {
+                            "id": "box_rows_columns_example",
+                            "header": {
+                                "caption": "Test",
+                                "position": {
+                                    "top": 10,
+                                    "left": 10
+                                },
+                                "size": {
+                                    "width": 345,
+                                    "height": 523
+                                }
+                            },
+                            "body": {
+                                "rows": [
+                                    {
+                                        "columns": [
+                                            {
+                                                "item": {
+                                                    "box_id": "item1",
+                                                    "caption": "aaa",
+                                                    "box_links": [
+                                                        {
+                                                            "link": {
+                                                                "typelink": 1,
+                                                                "box_id": "box_json_example:item1"
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": "box_json_example",
+                            "header": {
+                                "caption": "Test2",
+                                "position": {
+                                    "top": 10,
+                                    "left": 500
+                                },
+                                "size": {
+                                    "width": 345,
+                                    "height": 523
+                                }
+                            },
+                            "body": {
+                                "json": {
+                                    "type": "basket",
+                                    "beans": 47,
+                                    "apples": 7,
+                                    "oranges": 23,
+                                    "brand": "ConvertSimple",
+                                    "ratio": {
+                                        "box_id": "item1"
+                                    },
+                                    "fees": {
+                                        "cleaning": "$4.50",
+                                        "baking": "$27.30",
+                                        "commission": {
+                                            "box_links": [
+                                                {
+                                                    "link": {
+                                                        "typelink": 2,
+                                                        "box_id": "box_rows_columns_example:item1"
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        "descriptors": [
+                                            "clean",
+                                            "fresh",
+                                            "juicy",
+                                            "delicious"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+
+
+                // Disables the built-in context menu
+                mxEvent.disableContextMenu(container);
+
+                // Creates the graph inside the given container
+                var graph = new mxGraph(container);
+
+                // Enables rubberband selection
+                new mxRubberband(graph);
+
+                // Gets the default parent for inserting new cells. This
+                // is normally the first child of the root (ie. layer 0).
+                var parent = graph.getDefaultParent();
+
+                // Adds cells to the model in a single step
+                graph.getModel().beginUpdate();
+                try {
+                    var v_list = []
+
+                    data.boxes.forEach((item, index) => {
+                        var vertex = graph.insertVertex(parent, item.id, item.header.caption, item.header.position.left,
+                            item.header.position.top, item.header.size.width, item.header.size.height);
+
+                        if (item.body.json) {
+                            console.log(item, "ss" )
+                        }
+                    })
+
+
+                    // var v1 = graph.insertVertex(parent, null, 'Hello,', 20, 20, 80, 30);
+                    // var v2 = graph.insertVertex(parent, null, 'World!', 200, 150, 80, 30);
+                    // var e1 = graph.insertEdge(parent, null, '', v1, v2);
+                } finally {
+                    // Updates the display
+                    graph.getModel().endUpdate();
+                }
+            }
+        };
+    </script>
+</head>
+
+<!-- Page passes the container for the graph to the program -->
+<body onload="main(document.getElementById('graphContainer'))">
+
+<!-- Creates a container for the graph with a grid wallpaper -->
+
+<div id="graphContainer"
+     style="position:relative;overflow:hidden;width:100vw;height:100vh;cursor:default;">
+
+</div>
+
+</body>
+</html>

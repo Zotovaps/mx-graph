@@ -1,22 +1,8 @@
-<!--
-  Copyright (c) 2006-2015, JGraph Ltd
-
-  Scrollbars example for mxGraph. This example demonstrates using
-  a scrollable table with different sections in a cell label.
--->
 <html>
 <head>
     <title>Scrollbars example for mxGraph</title>
 
     <style type="text/css" media="screen">
-        table.title {
-            border-color: black;
-            border-collapse: collapse;
-            cursor: move;
-            height: 26px;
-            border-bottom-style: none;
-            color: black;
-        }
 
         table.title th {
             font-size: 10pt;
@@ -54,6 +40,78 @@
         li {
             list-style: none;
             height: 20px;
+        }
+
+        li:hover {
+            background: #C0C0C0;
+        }
+
+
+        .typography-h2 {
+            /*font-family: Inter;*/
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: 19px;
+
+            color: #3F4864;
+        }
+
+
+        .collapsed-cell {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 5px;
+
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+            padding: 10px 10px 10px 20px;
+
+            border-radius: 30px;
+            background: #0A1650;
+            box-shadow: 1px 1px 2px 0px rgba(52, 65, 113, 0.10);
+
+
+        }
+
+        .collapsed-cell > .typography-h2 {
+            color: #FFFFFF;
+        }
+
+
+        .cell-container {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+
+            box-sizing: border-box;
+            width: 100%;
+            padding: 10px;
+
+            cursor: default;
+        }
+
+        .cell-header {
+            width: 100%;
+            height: 24px;
+
+            overflow: hidden;
+        }
+
+        .cell-container > ul {
+
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+
+            overflow: auto;
+            flex: 1;
         }
     </style>
 
@@ -154,26 +212,157 @@
                 // Creates the graph inside the given container
                 var graph = new mxGraph(container);
 
-                // Uses the entity perimeter (below) as default
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_PERIMETER] = mxPerimeter.EntityPerimeter;
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_SHADOW] = true;
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_FILLCOLOR] = '#DDEAFF';
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_GRADIENTCOLOR] = '#A9C4EB';
-                delete graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_STROKECOLOR];
+                function updateStyle(state, hover) {
+                    if (state.cell.collapsed) {
+                        // state.style[mxConstants.STYLE_ARCSIZE] = "60";
 
-                // Used for HTML labels that use up the complete vertex space (see
-                // graph.cellRenderer.redrawLabel below for syncing the size)
+                        if (hover) {
+                            state.style[mxConstants.STYLE_STROKEWIDTH] = '4';
+                            state.style[mxConstants.STYLE_STROKECOLOR] = '#ff0000';
+                        }
+                    } else {
+                        if (hover) {
+                            state.style[mxConstants.STYLE_STROKEWIDTH] = '2';
+                            state.style[mxConstants.STYLE_STROKECOLOR] = '#2D49D7';
+                        }
+                    }
+                }
+
+                graph.addMouseListener({
+                    currentState: null,
+                    previousStyle: null,
+                    mouseDown: function (sender, me) {
+                        if (this.currentState != null) {
+                            this.dragLeave(me.getEvent(), this.currentState);
+                            this.currentState = null;
+                        }
+                    },
+                    mouseMove: function (sender, me) {
+                        if (this.currentState != null && me.getState() == this.currentState) {
+                            return;
+                        }
+
+                        var tmp = graph.view.getState(me.getCell());
+
+                        // Ignores everything but vertices
+                        if (graph.isMouseDown || (tmp != null && !graph.getModel().isVertex(tmp.cell))) {
+                            tmp = null;
+                        }
+
+                        if (tmp != this.currentState) {
+                            if (this.currentState != null) {
+                                this.dragLeave(me.getEvent(), this.currentState);
+                            }
+
+                            this.currentState = tmp;
+
+                            if (this.currentState != null) {
+                                this.dragEnter(me.getEvent(), this.currentState);
+                            }
+                        }
+                    },
+                    mouseUp: function (sender, me) {
+                    },
+                    dragEnter: function (evt, state) {
+                        if (state != null) {
+                            this.previousStyle = state.style;
+                            state.style = mxUtils.clone(state.style);
+                            updateStyle(state, true);
+                            state.shape.apply(state);
+                            state.shape.redraw();
+
+                            if (state.text != null) {
+                                state.text.apply(state);
+                                state.text.redraw();
+                            }
+                        }
+                    },
+                    dragLeave: function (evt, state) {
+                        if (state != null) {
+                            state.style = this.previousStyle;
+                            updateStyle(state, false);
+                            state.shape.apply(state);
+                            state.shape.redraw();
+
+                            if (state.text != null) {
+                                state.text.apply(state);
+                                state.text.redraw();
+                            }
+                        }
+                    }
+                });
+
+                graph.addListener(mxEvent.CELLS_MOVED, function (sender, evt) {
+                    var cell = evt.getProperties("cell");
+                    console.log(cell.cells[0], cell.cells[0].geometry.x, cell.cells[0].geometry.y, "Cell was moved");
+                });
+
+                graph.addListener(mxEvent.CELLS_RESIZED, function (sender, evt) {
+                    var cell = evt.getProperties("cell");
+                    console.log(cell.cells[0], cell.cells[0].geometry.width, cell.cells[0].geometry.height, "Cell was resized");
+                });
+
+
+                //Collapsed/ icon override
+                graph.collapsedImage = new mxImage('./icons/arrow-right.svg', 24, 24);
+                graph.expandedImage = new mxImage('./icons/arrow-left.svg', 24, 24);
+
+
+                // Использует периметр объекта (ниже) по умолчанию
+                // (Uses the entity perimeter (below) as default)
+                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
+                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
+                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_PERIMETER] = mxPerimeter.EntityPerimeter;
+                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_FILLCOLOR] = '#FFFFFF';
+                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_STROKECOLOR] = '#D2D7E3';
+                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_STROKEWIDTH] = 1;
+                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_ROUNDED] = 1;
+                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_ABSOLUTE_ARCSIZE] = 1;
+                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_ARCSIZE] = "16";
+
+
+                // Используется для меток HTML, которые занимают все пространство вершин
+                // (см. graph.cellRenderer.redrawLabel ниже для синхронизации размера)
                 graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_OVERFLOW] = 'fill';
 
-                // Uses the entity edge style as default
-                graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_EDGE] = mxEdgeStyle.EntityRelation;
-                graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_STROKECOLOR] = 'black';
-                graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_FONTCOLOR] = 'black';
 
-                // Allows new connections to be made but do not allow existing
-                // connections to be changed for the sake of simplicity of this
-                // example
+                // Использует стиль ребра объекта по умолчанию
+                // (Uses the entity edge style as default)
+                mxMarker.addMarker('custom', function (canvas, shape, type, pe, unitX, unitY, size, source, sw, filled) {
+                    var a = size / 2;
+
+                    var pt = pe.clone();
+                    pe.x -= unitX * a;
+                    pe.y -= unitY * a;
+
+                    return function () {
+                        canvas.state.fillColor = "#FFFFFF"
+                        canvas.state.strokeWidth = 3
+
+                        canvas.ellipse(pt.x - a, pt.y - a, size, size);
+
+                        if (filled) {
+                            canvas.fillAndStroke();
+                        } else {
+                            canvas.stroke();
+                        }
+                    };
+                })
+
+                graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_EDGE] = mxEdgeStyle.ElbowConnector;
+                graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_CONNECTOR;
+                graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_ROUNDED] = 1;
+                graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_STROKECOLOR] = '#2D49D7';
+                graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_FONTCOLOR] = '#446299';
+                graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_STROKEWIDTH] = 2;
+                graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_ENDSIZE] = 15;
+                graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_STARTSIZE] = 15;
+                graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_ENDARROW] = 'custom';
+                graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_STARTARROW] = 'custom';
+
+
+                // Позволяет устанавливать новые соединения,
+                // но не разрешает изменять существующие соединения
                 graph.setCellsDisconnectable(false);
                 graph.setAllowDanglingEdges(false);
                 graph.setCellsEditable(false);
@@ -181,7 +370,9 @@
                 graph.setPanning(true);
                 graph.centerZoom = false;
 
-                // Override folding to allow for tables
+
+                // Переопределить свертывание, чтобы разрешить таблицы
+                // (Override folding to allow for tables)
                 graph.isCellFoldable = function (cell, collapse) {
                     return this.getModel().isVertex(cell);
                 };
@@ -242,14 +433,20 @@
                 // Adds a new function to update the currentRow based on the given event
                 // and return the DOM node for that row
                 graph.connectionHandler.updateRow = function (target) {
-                    while (target != null && target.nodeName !== 'LI') {
+                    while (target != null && target.nodeName !== 'DIV' &&
+                    target.nodeName !== 'LI' && target.nodeName !== 'TR' &&
+                    target.nodeName !== 'svg' && target.nodeName !== 'UL' &&
+                    target.nodeName !== 'IMG' && target.nodeName !== 'TABLE') {
+
+
+                        console.log(target.nodeName)
                         target = target.parentNode;
                     }
 
                     this.currentRow = null;
 
                     // Checks if we're dealing with a row in the correct table
-                    if (target != null && target.parentNode.className == 'erd') {
+                    if (target != null && target.parentNode.className == 'erd' || target.parentNode.parentNode.className == 'erd') {
                         // Stores the current row number in a property so that it can
                         // be retrieved to create the preview and final edge
                         var rowNumber = 0;
@@ -325,24 +522,34 @@
                     return state;
                 };
 
-                // Overrides getLabel to return empty labels for edges and
-                // short markup for collapsed cells.
+
+                // Переопределяет getLabel, чтобы возвращать пустые метки для ребер и
+                // короткую разметку для свернутых ячеек.
                 graph.getLabel = function (cell) {
                     if (this.getModel().isVertex(cell)) {
-                        console.log(cell)
+
                         if (this.isCellCollapsed(cell)) {
-                            return '<table style="overflow:hidden;" width="100%" height="100%" border="1" cellpadding="4" class="title" style="height:100%;">' +
-                                `<tr><th>${cell.value.header.caption}</th></tr>` +
-                                '</table>';
+                            var collapsedCellHtml =
+                                `<ul class="collapsed-cell">` +
+                                `<li class="typography-h2">${cell.value.header.caption}</li>` +
+                                `</ul>`
+
+                            return collapsedCellHtml
 
                         } else {
 
                             if (cell.value.body.json) {
-                                var cellHtml = '<table style="overflow:hidden;" width="100%" border="1" cellpadding="4" class="title">' +
-                                    `<tr><th colspan="2">${cell.value.header.caption}</th></tr>` +
-                                    '</table>' +
+                                var cellHtml = `<ul class="cell-header">` +
+                                    `<li class="typography-h2">${cell.value.header.caption}</li>` +
+                                    `</ul>` +
                                     '<div style="overflow:auto;cursor:default;top:26px;bottom:0px;position:absolute;width:100%;">'+
                                     '<ul style="width:100%; height: 100%; text-align: start; padding: 5px 10px; box-sizing: border-box" class="erd">'
+
+                                // var cellHtml = '<div class="cell-container">' +
+                                //     `<div class="cell-header">` +
+                                //     `<span class="typography-h2">${cell.value.header.caption}</span>` +
+                                //     '</div>' +
+                                //     '<ul class="erd">'
 
                                 Object.keys(cell.value.body.json).forEach(key => {
                                     cellHtml += drawJson(key, cell.value.body.json[key]);
@@ -351,22 +558,27 @@
                                 cellHtml += '</ul></div>';
 
                                 return cellHtml;
-                            }
-                            else if (cell.value.body.rows) {
-                                return '<table style="overflow:hidden;" width="100%" border="1" cellpadding="4" class="title">' +
-                                    '<tr><th colspan="2">Customers</th></tr>' +
-                                    '</table>'+
-                                    '<div style="overflow:auto;cursor:default;top:26px;bottom:0px;position:absolute;width:100%;">'+
-                                    '<table width="100%" height="100%" border="1" cellpadding="4" class="erd">' +
-                                    '<tr><td>' +
-                                    '<img align="center" src="images/key.png"/>' +
-                                    '<img align="center" src="images/plus.png"/>' +
-                                    '</td><td>' +
-                                    '<u>customerId</u></td></tr><tr><td></td><td>number</td></tr>' +
-                                    '<tr><td></td><td>firstName</td></tr><tr><td></td><td>lastName</td></tr>' +
-                                    '<tr><td></td><td>streetAddress</td></tr><tr><td></td><td>city</td></tr>' +
-                                    '<tr><td></td><td>state</td></tr><tr><td></td><td>zip</td></tr>' +
-                                    '</table></div>'
+                            } else if (cell.value.body.rows) {
+                                var cellHtml = '<table style="overflow:hidden;" width="100%" border="1" cellpadding="4" class="title">' +
+                                    `<tr><th colspan="2">${cell.value.header.caption}</th></tr>` +
+                                    '</table>' +
+                                    '<div style="overflow:auto;cursor:default;top:26px;bottom:0px;position:absolute;width:100%;">' +
+                                    '<table width="100%" height="100%" border="1" cellpadding="4" class="erd">';
+
+
+                                cell.value.body.rows.forEach(item => {
+                                    cellHtml += `<tr>`
+
+                                    item.columns.forEach(item2 => {
+                                        cellHtml += `<td>${item2.item.caption}</td>`
+                                    })
+
+                                    cellHtml += `</tr>`
+                                })
+
+                                cellHtml += '</table></div>'
+
+                                return cellHtml
                             }
 
                         }
@@ -481,6 +693,52 @@
                                         }
                                     }
                                 }
+                            },
+                            {
+                                "id": "box_json_example",
+                                "header": {
+                                    "caption": "Test2",
+                                    "position": {
+                                        "top": 10,
+                                        "left": 1000
+                                    },
+                                    "size": {
+                                        "width": 345,
+                                        "height": 523
+                                    }
+                                },
+                                "body": {
+                                    "json": {
+                                        "type": "basket",
+                                        "beans": 47,
+                                        "apples": 7,
+                                        "oranges": 23,
+                                        "brand": "ConvertSimple",
+                                        "ratio": {
+                                            "box_id": "item1"
+                                        },
+                                        "fees": {
+                                            "cleaning": "$4.50",
+                                            "baking": "$27.30",
+                                            "commission": {
+                                                "box_links": [
+                                                    {
+                                                        "link": {
+                                                            "typelink": 2,
+                                                            "box_id": "box_rows_columns_example:item1"
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            "descriptors": [
+                                                "clean",
+                                                "fresh",
+                                                "juicy",
+                                                "delicious"
+                                            ]
+                                        }
+                                    }
+                                }
                             }
                         ]
                     }
@@ -489,9 +747,12 @@
                         let vertex = graph.insertVertex(parent, item.id, item, item.header.position.left,
                             item.header.position.top, item.header.size.width, item.header.size.height);
 
-
-                        vertex.geometry.alternateBounds = new mxRectangle(0, 0, item.header.size.width, 26);
+                        vertex.geometry.alternateBounds = new mxRectangle(0, 0, item.header.size.width, 44);
                     })
+
+
+                    var vertices = graph.getChildVertices(parent);
+                    console.log(vertices, "VERTICES")
 
                     // var v1 = graph.insertVertex(parent, null, '', 20, 20, width, height);
                     // v1.geometry.alternateBounds = new mxRectangle(0, 0, width, 26);
@@ -522,7 +783,7 @@
             var next = this.getNextPoint(edge, end, source);
             var div = start.text.node.getElementsByTagName('div')[2];
 
-            console.log(next)
+            console.log(div, "qqqqqq")
 
             var x = start.x;
             var y = start.getCenterY();
@@ -540,13 +801,23 @@
                     var row = parseInt(edge.cell.value.getAttribute(attr));
 
                     // HTML labels contain an outer table which is built-in
-                    var ul = div.getElementsByTagName('ul')[0];
-                    var lis = ul.getElementsByTagName('li');
-                    var tr = lis[Math.min(lis.length - 1, row - 1)];
+
+                    var element
+
+                    if (div.getElementsByTagName('ul')[0]) {
+                        var ul = div.getElementsByTagName('ul')[0];
+                        var lis = ul.getElementsByTagName('li');
+                        element = lis[Math.min(lis.length - 1, row - 1)];
+                    } else {
+                        var table = div.getElementsByTagName('table')[0];
+                        var trs = table.getElementsByTagName('tr');
+                        element = trs[Math.min(trs.length - 1, row - 1)];
+                    }
+
 
                     // Gets vertical center of source or target row
-                    if (tr != null) {
-                        y = getRowY(start, tr);
+                    if (element != null) {
+                        y = getRowY(start, element);
                     }
                 }
 
@@ -613,37 +884,52 @@
             }
         };
 
-        // Defines global helper function to get y-coordinate for a given cell state and row
-        var getRowY = function (state, tr) {
-            var s = state.view.scale;
-            var div = tr.parentNode.parentNode.parentNode;
-            var offsetTop = parseInt(div.style.top);
-            var y = state.y + (tr.offsetTop + tr.offsetHeight / 2 - div.scrollTop + offsetTop) * s;
-            y = Math.min(state.y + state.height, Math.max(state.y + offsetTop * s, y));
 
-            return y;
+        // Определяет глобальную вспомогательную функцию для получения координаты Y для заданного состояния ячейки и строки.
+        const getRowY = function (state, elem) {
+
+            var s = state.view.scale;
+
+            if (elem.nodeName === 'LI') {
+                var div = elem.parentNode.parentNode;
+                var offsetTop = parseInt(div.style.top);
+                var y = state.y + (elem.offsetTop + elem.offsetHeight / 2 - div.scrollTop + offsetTop) * s;
+                y = Math.min(state.y + state.height, Math.max(state.y + offsetTop * s, y));
+
+                return y;
+            }
+
+            if (elem.nodeName === 'TR') {
+                var div = elem.parentNode.parentNode.parentNode;
+                var offsetTop = parseInt(div.style.top);
+                var y = state.y + (elem.offsetTop + elem.offsetHeight / 2 - div.scrollTop + offsetTop) * s;
+                y = Math.min(state.y + state.height, Math.max(state.y + offsetTop * s, y));
+
+                console.log(y)
+                return y;
+            }
         };
 
-        // Custom function
-        var drawJson = function (key, data, level = 0, html = "") {
-            if (typeof(data) === "object") {
+        // Рекурсивная функция генерации DOM по JSON
+        const drawJson = function (key, data, level = 0, html = "") {
+            if (typeof (data) === "object") {
                 html += `<li style="margin-left: calc(10px * ${level})"><span>${key}:</span></li>`
                 Object.keys(data).forEach(k => {
                     html += drawJson(k, data[k], level + 1)
                 })
                 return html
-            }
-            else {
+            } else {
                 return `<li style="margin-left: calc(10px * ${level})"> <span>${key}:${data}</span></li>`
             }
         }
+
     </script>
 </head>
 
-<!-- Page passes the container for the graph to the program -->
+<!-- Страница передает контейнер для графа в программу -->
 <body onload="main(document.getElementById('graphContainer'))">
 
-<!-- Creates a container for the graph with a grid wallpaper. Width, height and cursor in the style are for IE only -->
+<!-- Создает контейнер для графика с обоями сетки. Ширина, высота и курсор в стиле только для IE -->
 <div id="graphContainer"
      style="cursor:default;position:absolute;top:30px;left:0px;bottom:0px;right:0px;">
 </div>

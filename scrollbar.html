@@ -28,6 +28,15 @@
             color: black;
         }
 
+        table.erd > tbody tr:nth-child(odd) {
+            background-color: #F7F8FC;
+        }
+
+        table.erd > tbody tr:nth-child(even) {
+            background-color: #FFFFFF;
+
+        }
+
         button {
             position: absolute;
         }
@@ -438,8 +447,6 @@
                     target.nodeName !== 'svg' && target.nodeName !== 'UL' &&
                     target.nodeName !== 'IMG' && target.nodeName !== 'TABLE') {
 
-
-                        console.log(target.nodeName)
                         target = target.parentNode;
                     }
 
@@ -539,17 +546,17 @@
                         } else {
 
                             if (cell.value.body.json) {
-                                var cellHtml = `<ul class="cell-header">` +
-                                    `<li class="typography-h2">${cell.value.header.caption}</li>` +
-                                    `</ul>` +
-                                    '<div style="overflow:auto;cursor:default;top:26px;bottom:0px;position:absolute;width:100%;">'+
-                                    '<ul style="width:100%; height: 100%; text-align: start; padding: 5px 10px; box-sizing: border-box" class="erd">'
+                                // var cellHtml = `<ul class="cell-header">` +
+                                //     `<li class="typography-h2">${cell.value.header.caption}</li>` +
+                                //     `</ul>` +
+                                //     '<div style="overflow:auto;cursor:default;top:26px;bottom:0px;position:absolute;width:100%;">'+
+                                //     '<ul style="width:100%; height: 100%; text-align: start; padding: 5px 10px; box-sizing: border-box" class="erd">'
 
-                                // var cellHtml = '<div class="cell-container">' +
-                                //     `<div class="cell-header">` +
-                                //     `<span class="typography-h2">${cell.value.header.caption}</span>` +
-                                //     '</div>' +
-                                //     '<ul class="erd">'
+                                var cellHtml = '<div class="cell-container">' +
+                                    `<div class="cell-header">` +
+                                    `<span class="typography-h2">${cell.value.header.caption}</span>` +
+                                    '</div>' +
+                                    '<ul class="erd">'
 
                                 Object.keys(cell.value.body.json).forEach(key => {
                                     cellHtml += drawJson(key, cell.value.body.json[key]);
@@ -566,6 +573,13 @@
                                     '<table width="100%" height="100%" border="1" cellpadding="4" class="erd">';
 
 
+                                var cellHtml = '<div class="cell-container">' +
+                                    `<div class="cell-header">` +
+                                    `<span class="typography-h2">${cell.value.header.caption}</span>` +
+                                    '</div>' +
+                                    '<table width="100%" height="100%" class="erd">'
+
+
                                 cell.value.body.rows.forEach(item => {
                                     cellHtml += `<tr>`
 
@@ -576,7 +590,7 @@
                                     cellHtml += `</tr>`
                                 })
 
-                                cellHtml += '</table></div>'
+                                cellHtml += '</table>'
 
                                 return cellHtml
                             }
@@ -766,15 +780,15 @@
                     graph.getModel().endUpdate();
                 }
 
-                var btn1 = mxUtils.button('+', function () {
-                    graph.zoomIn();
-                });
-                btn1.style.marginLeft = '20px';
-
-                document.body.appendChild(btn1);
-                document.body.appendChild(mxUtils.button('-', function () {
-                    graph.zoomOut();
-                }));
+                // var btn1 = mxUtils.button('+', function () {
+                //     graph.zoomIn();
+                // });
+                // btn1.style.marginLeft = '20px';
+                //
+                // document.body.appendChild(btn1);
+                // document.body.appendChild(mxUtils.button('-', function () {
+                //     graph.zoomOut();
+                // }));
             }
         }
 
@@ -783,7 +797,7 @@
             var next = this.getNextPoint(edge, end, source);
             var div = start.text.node.getElementsByTagName('div')[2];
 
-            console.log(div, "qqqqqq")
+            console.log(start.text.node.getElementsByTagName('div'), div, "qqqqqq")
 
             var x = start.x;
             var y = start.getCenterY();
@@ -804,6 +818,7 @@
 
                     var element
 
+                    console.log(div.getElementsByTagName('ul')[0], div.getElementsByTagName('table')[0], "ccc")
                     if (div.getElementsByTagName('ul')[0]) {
                         var ul = div.getElementsByTagName('ul')[0];
                         var lis = ul.getElementsByTagName('li');
@@ -822,8 +837,12 @@
                 }
 
                 // Keeps vertical coordinate inside start
-                var offsetTop = parseInt(div.style.top) * start.view.scale;
+                // var offsetTop = parseInt(div.style.top) * start.view.scale; Error with new HTML
+                var offsetTop = parseInt(div.offsetTop) * start.view.scale;
+
                 y = Math.min(start.y + start.height, Math.max(start.y + offsetTop, y));
+
+                console.log(y, offsetTop, "ERROR")
 
                 // Updates the vertical position of the nearest point if we're not
                 // dealing with a connection preview, in which case either the
@@ -887,25 +906,31 @@
 
         // Определяет глобальную вспомогательную функцию для получения координаты Y для заданного состояния ячейки и строки.
         const getRowY = function (state, elem) {
-
             var s = state.view.scale;
 
             if (elem.nodeName === 'LI') {
-                var div = elem.parentNode.parentNode;
-                var offsetTop = parseInt(div.style.top);
-                var y = state.y + (elem.offsetTop + elem.offsetHeight / 2 - div.scrollTop + offsetTop) * s;
-                y = Math.min(state.y + state.height, Math.max(state.y + offsetTop * s, y));
+                var div = elem.parentNode;
+                // Была ошибка после изменения HTML
+                // var offsetTop = parseInt(div.offsetTop);
+                // var y = state.y + (elem.offsetTop + elem.offsetHeight / 2 - div.scrollTop + offsetTop) * s;
+                // y = Math.min(state.y + state.height, Math.max(state.y + offsetTop * s, y));
+                var y = state.y + (elem.offsetTop + elem.offsetHeight / 2 - div.scrollTop) * s;
+                y = Math.min(state.y + state.height, Math.max(state.y * s, y));
 
+                console.log(state.y, elem.offsetTop, div.offsetTop, y, "GetRowY")
                 return y;
             }
 
             if (elem.nodeName === 'TR') {
-                var div = elem.parentNode.parentNode.parentNode;
-                var offsetTop = parseInt(div.style.top);
-                var y = state.y + (elem.offsetTop + elem.offsetHeight / 2 - div.scrollTop + offsetTop) * s;
-                y = Math.min(state.y + state.height, Math.max(state.y + offsetTop * s, y));
+                var div = elem.parentNode.parentNode;
+                // Была ошибка после изменения HTML
+                // var offsetTop = parseInt(div.offsetTop);
+                // var y = state.y + (elem.offsetTop + elem.offsetHeight / 2 - div.scrollTop + offsetTop) * s;
+                // y = Math.min(state.y + state.height, Math.max(state.y + offsetTop * s, y));
+                var y = state.y + (elem.offsetTop + elem.offsetHeight / 2 - div.scrollTop) * s;
+                y = Math.min(state.y + state.height, Math.max(state.y * s, y));
 
-                console.log(y)
+                console.log(div, y, "GetRowY")
                 return y;
             }
         };

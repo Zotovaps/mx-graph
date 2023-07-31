@@ -68,7 +68,9 @@
 
         li {
             list-style: none;
-            height: 20px;
+            height: 48px;
+            display: flex;
+            align-items: center;
         }
 
         li:hover {
@@ -245,10 +247,10 @@
                     if (state.cell.collapsed) {
                         // state.style[mxConstants.STYLE_ARCSIZE] = "60";
 
-                        if (hover) {
-                            state.style[mxConstants.STYLE_STROKEWIDTH] = '4';
-                            state.style[mxConstants.STYLE_STROKECOLOR] = '#ff0000';
-                        }
+                        // if (hover) {
+                        //     state.style[mxConstants.STYLE_STROKEWIDTH] = '4';
+                        //     state.style[mxConstants.STYLE_STROKECOLOR] = '#ff0000';
+                        // }
                     } else {
                         if (hover) {
                             state.style[mxConstants.STYLE_STROKEWIDTH] = '2';
@@ -348,6 +350,8 @@
                 graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_ROUNDED] = 1;
                 graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_ABSOLUTE_ARCSIZE] = 1;
                 graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_ARCSIZE] = "16";
+                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_FONTSIZE] = "14";
+                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_FONTCOLOR] = "#24293D";
 
 
                 // Используется для меток HTML, которые занимают все пространство вершин
@@ -433,7 +437,9 @@
                     if (model.isVertex(state.cell) && state.text != null) {
                         // Scrollbars are on the div
                         var s = graph.view.scale;
-                        var div = state.text.node.getElementsByTagName('div')[2];
+                        var div = state.cell.isCollapsed() ? state.text.node.getElementsByTagName('div')[2] : state.text.node.getElementsByTagName('div')[2].getElementsByClassName("erd")[0];
+
+                        console.log(state.cell.isCollapsed(), "sss")
 
                         if (div != null) {
                             // Installs the handler for updating connected edges
@@ -493,21 +499,23 @@
                     return target;
                 };
 
+
                 // Adds placement of the connect icon based on the mouse event target (row)
                 graph.connectionHandler.updateIcons = function (state, icons, me) {
                     var target = me.getSource();
                     target = this.updateRow(target);
 
                     if (target != null && this.currentRow != null) {
-                        var div = target.parentNode.parentNode;
+                        var div = target.parentNode;
                         var s = state.view.scale;
 
                         icons[0].node.style.visibility = 'visible';
                         icons[0].bounds.x = state.x + target.offsetLeft + Math.min(state.width,
                             target.offsetWidth * s) - this.icons[0].bounds.width - 2;
                         icons[0].bounds.y = state.y - this.icons[0].bounds.height / 2 + (target.offsetTop +
-                            target.offsetHeight / 2 - div.scrollTop + div.offsetTop) * s;
+                            target.offsetHeight / 2 - div.scrollTop) * s;
                         icons[0].redraw();
+
 
                         this.currentRowNode = target;
                     } else {
@@ -615,7 +623,6 @@
 
                                 return cellHtml
                             }
-
                         }
                     } else {
                         return '';
@@ -624,12 +631,12 @@
 
                 // User objects (data) for the individual cells
                 var doc = mxUtils.createXmlDocument();
-
-                // Same should be used to create the XML node for the table
-                // description and the rows (most probably as child nodes)
-                var relation = doc.createElement('Relation');
-                relation.setAttribute('sourceRow', '4');
-                relation.setAttribute('targetRow', '6');
+                //
+                // // Same should be used to create the XML node for the table
+                // // description and the rows (most probably as child nodes)
+                // var relation = doc.createElement('Relation');
+                // relation.setAttribute('sourceRow', '4');
+                // relation.setAttribute('targetRow', '6');
 
                 // Enables rubberband selection
                 new mxRubberband(graph);
@@ -730,54 +737,10 @@
                                     }
                                 }
                             },
-                            {
-                                "id": "box_json_example_2",
-                                "header": {
-                                    "caption": "Test2",
-                                    "position": {
-                                        "top": 10,
-                                        "left": 1000
-                                    },
-                                    "size": {
-                                        "width": 345,
-                                        "height": 523
-                                    }
-                                },
-                                "body": {
-                                    "json": {
-                                        "type": "basket",
-                                        "beans": 47,
-                                        "apples": 7,
-                                        "oranges": 23,
-                                        "brand": "ConvertSimple",
-                                        "ratio": {
-                                            "box_id": "item1"
-                                        },
-                                        "fees": {
-                                            "cleaning": "$4.50",
-                                            "baking": "$27.30",
-                                            "commission": {
-                                                "box_links": [
-                                                    {
-                                                        "link": {
-                                                            "typelink": 2,
-                                                            "box_id": "box_rows_columns_example:item1"
-                                                        }
-                                                    }
-                                                ]
-                                            },
-                                            "descriptors": [
-                                                "clean",
-                                                "fresh",
-                                                "juicy",
-                                                "delicious"
-                                            ]
-                                        }
-                                    }
-                                }
-                            }
+
                         ]
                     }
+
                     data.boxes.forEach((item, index) => {
                         let vertex = graph.insertVertex(parent, item.id, item, item.header.position.left,
                             item.header.position.top, item.header.size.width, item.header.size.height);
@@ -787,27 +750,58 @@
 
 
                     var verticesEdge = []
+                    var indexRow = 0
+                    var jsonList = []
                     var vertices = graph.getChildVertices(parent);
+
+
+                    const recursiveJson = function (key, data, id) {
+                        indexRow++
+                        if (typeof (data) === "object") {
+
+                            Object.keys(data).forEach(k => {
+                                if (k !== "box_links")
+                                    recursiveJson(k, data[k], id)
+                                else {
+                                    data[k].forEach(link => {
+                                        let box_id = link.link.box_id.split(":");
+
+                                        let vert = vertices.find(v => v.id === box_id[0])
+
+
+                                        jsonList.push({targetId: box_id[0], targetRow: 1, sourceId: id, sourceRow: indexRow})
+                                    })
+                                }
+                            })
+                        } else {
+                            return
+                        }
+                    }
+
                     vertices.forEach((item, index) => {
-                        console.log(item, "VVV")
+                        indexRow = 0
+                        if (item.value.body.json) {
 
-                        vertices.forEach(item2 => {
-                            if (item2 !== item) {
-                                graph.insertEdge(parent, null, relation, item, item2);
 
-                            }
-                        })
+                            Object.keys(item.value.body.json).forEach(k => {
+                                recursiveJson(k, item.value.body.json[k], item.id)
+                            })
+
+                            console.log(jsonList, "jsonList")
+                        }
 
                     })
 
-                    console.log(vertices, "VERTICES")
+                    jsonList.forEach(item => {
+                        var relation = doc.createElement('Relation');
+                        relation.setAttribute('sourceRow', item.sourceRow);
+                        relation.setAttribute('targetRow', item.targetRow);
 
-                    // var v1 = graph.insertVertex(parent, null, '', 20, 20, width, height);
-                    // v1.geometry.alternateBounds = new mxRectangle(0, 0, width, 26);
-                    //
-                    // var v2 = graph.insertVertex(parent, null, '', 400, 150, width, height);
-                    // v2.geometry.alternateBounds = new mxRectangle(0, 0, width, 26);
-                    //
+                        graph.insertEdge(parent, null, relation,
+                            vertices.find(v => v.id === item.sourceId), vertices.find(v => v.id === item.targetId));
+
+                    })
+
                 } finally {
                     // Updates the display
                     graph.getModel().endUpdate();
@@ -825,12 +819,12 @@
             }
         }
 
+
         // Implements a special perimeter for table rows inside the table markup
         mxGraphView.prototype.updateFloatingTerminalPoint = function (edge, start, end, source) {
+
             var next = this.getNextPoint(edge, end, source);
             var div = start.text.node.getElementsByTagName('div')[2];
-
-            console.log(start.text.node.getElementsByTagName('div'), div, "qqqqqq")
 
             var x = start.x;
             var y = start.getCenterY();
@@ -970,7 +964,6 @@
                 return y;
             }
         };
-
 
 
         // Рекурсивная функция генерации DOM по JSON

@@ -354,6 +354,14 @@
                 graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_FONTSIZE] = "14";
                 graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_FONTCOLOR] = "#24293D";
 
+                var collapsedStyle = { ...graph.stylesheet.getDefaultVertexStyle()};
+
+                collapsedStyle[mxConstants.STYLE_ARCSIZE] = "60";
+                collapsedStyle[mxConstants.STYLE_FILLCOLOR] = '#0A1650';
+                collapsedStyle[mxConstants.STYLE_FONTCOLOR] = "#FFFFFF";
+
+                graph.getStylesheet().putCellStyle('defaultCollapsedVertex', collapsedStyle);
+
 
                 // Используется для меток HTML, которые занимают все пространство вершин
                 // (см. graph.cellRenderer.redrawLabel ниже для синхронизации размера)

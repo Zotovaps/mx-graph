@@ -657,93 +657,17 @@ mxCellRenderer.prototype.installCellOverlayListeners = function(state, overlay, 
  */
 mxCellRenderer.prototype.createControl = function(state)
 {
-	console.log(state, "State")
 	var graph = state.view.graph;
 	var image = graph.getFoldingImage(state);
-
-	console.log(image, graph, "LLLL")
 	
 	if (graph.foldingEnabled && image != null)
 	{
 		if (state.control == null)
 		{
 			var b = new mxRectangle(0, 0, image.width, image.height);
-
 			state.control = new mxImageShape(b, image.src);
 			state.control.preserveImageAspect = false;
 			state.control.dialect = graph.dialect;
-
-			state.control.redrawHtmlShape = function() {
-				this.node.style.left = Math.round(state.x + state.width - 10 - image.width)  + 'px';
-				this.node.style.top = Math.round(state.y + 10) + 'px';
-				this.node.style.width = Math.max(0, Math.round(this.bounds.width)) + 'px';
-				this.node.style.height = Math.max(0, Math.round(this.bounds.height)) + 'px';
-				this.node.innerHTML = '';
-
-				if (this.image != null)
-				{
-					var fill = mxUtils.getValue(this.style, mxConstants.STYLE_IMAGE_BACKGROUND, '');
-					var stroke = mxUtils.getValue(this.style, mxConstants.STYLE_IMAGE_BORDER, '');
-					this.node.style.backgroundColor = fill;
-					this.node.style.borderColor = stroke;
-
-					// VML image supports PNG in IE6
-					var useVml = mxClient.IS_IE6 || ((document.documentMode == null || document.documentMode <= 8) && this.rotation != 0);
-					var img = document.createElement((useVml) ? mxClient.VML_PREFIX + ':image' : 'img');
-					img.setAttribute('border', '0');
-					img.style.position = 'absolute';
-					img.src = this.image;
-
-					var filter = (this.opacity < 100) ? 'alpha(opacity=' + this.opacity + ')' : '';
-					this.node.style.filter = filter;
-
-					if (this.flipH && this.flipV)
-					{
-						filter += 'progid:DXImageTransform.Microsoft.BasicImage(rotation=2)';
-					}
-					else if (this.flipH)
-					{
-						filter += 'progid:DXImageTransform.Microsoft.BasicImage(mirror=1)';
-					}
-					else if (this.flipV)
-					{
-						filter += 'progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1)';
-					}
-
-					if (img.style.filter != filter)
-					{
-						img.style.filter = filter;
-					}
-
-					if (img.nodeName == 'image')
-					{
-						img.style.rotation = this.rotation;
-					}
-					else if (this.rotation != 0)
-					{
-						// LATER: Add flipV/H support
-						mxUtils.setPrefixedStyle(img.style, 'transform', 'rotate(' + this.rotation + 'deg)');
-					}
-					else
-					{
-						mxUtils.setPrefixedStyle(img.style, 'transform', '');
-					}
-
-					// Known problem: IE clips top line of image for certain angles
-					img.style.width = this.node.style.width;
-					img.style.height = this.node.style.height;
-
-					this.node.style.backgroundImage = '';
-					this.node.appendChild(img);
-				}
-				else
-				{
-					this.setTransparentBackgroundImage(this.node);
-				}
-			}
-
-			console.log(state.control, "RECT")
-
 
 			this.initControl(state, state.control, true, this.createControlClickHandler(state));
 		}

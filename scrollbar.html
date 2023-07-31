@@ -325,11 +325,43 @@
 
                 graph.addListener(mxEvent.CELLS_MOVED, function (sender, evt) {
                     var cell = evt.getProperties("cell");
+
+                    cell.cells[0].value.header.position.top = cell.cells[0].geometry.y;
+                    cell.cells[0].value.header.position.left = cell.cells[0].geometry.x;
+
+                    data.boxes.forEach(item => {
+                        if (item.id === cell.cells[0].value.id) {
+                            item.header.position.top = cell.cells[0].geometry.y;
+                            item.header.position.left = cell.cells[0].geometry.x;
+                        }
+                    })
+
+                    localStorage.setItem("graph", JSON.stringify(data))
+
                     console.log(cell.cells[0], cell.cells[0].geometry.x, cell.cells[0].geometry.y, "Cell was moved");
                 });
 
                 graph.addListener(mxEvent.CELLS_RESIZED, function (sender, evt) {
                     var cell = evt.getProperties("cell");
+
+                    cell.cells[0].value.header.size.width = cell.cells[0].geometry.width;
+                    cell.cells[0].value.header.size.height = cell.cells[0].geometry.height;
+
+                    cell.cells[0].value.header.position.top = cell.cells[0].geometry.y;
+                    cell.cells[0].value.header.position.left = cell.cells[0].geometry.x;
+
+                    data.boxes.forEach(item => {
+                        if (item.id === cell.cells[0].value.id) {
+                            item.header.size.width = cell.cells[0].geometry.width;
+                            item.header.size.height = cell.cells[0].geometry.height;
+
+                            item.header.position.top = cell.cells[0].geometry.y;
+                            item.header.position.left = cell.cells[0].geometry.x;
+                        }
+                    })
+
+                    localStorage.setItem("graph", JSON.stringify(data))
+
                     console.log(cell.cells[0], cell.cells[0].geometry.width, cell.cells[0].geometry.height, "Cell was resized");
                 });
 
@@ -649,11 +681,9 @@
                 var parent = graph.getDefaultParent();
 
 
-                // Adds cells to the model in a single step
-                graph.getModel().beginUpdate();
-                try {
-
-                    var data = {
+                // Get data from localstorage
+                if (localStorage.getItem("graph") === null) {
+                    var graph = {
                         "boxes": [
                             {
                                 "id": "box_rows_columns_example",
@@ -740,6 +770,20 @@
 
                         ]
                     }
+
+                    localStorage.setItem("graph", JSON.stringify(graph));
+                }
+
+                var data = JSON.parse(localStorage.getItem("graph"));
+
+
+                // Adds cells to the model in a single step
+                graph.getModel().beginUpdate();
+                try {
+
+
+
+
 
                     data.boxes.forEach((item, index) => {
                         let vertex = graph.insertVertex(parent, item.id, item, item.header.position.left,

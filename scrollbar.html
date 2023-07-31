@@ -366,6 +366,23 @@
                     console.log(cell.cells[0], cell.cells[0].geometry.width, cell.cells[0].geometry.height, "Cell was resized");
                 });
 
+                graph.addListener(mxEvent.FOLD_CELLS, function (sender, evt) {
+                    var cell = evt.getProperties("cell");
+
+                    cell.cells[0].value.header.collapse = cell.cells[0].collapsed;
+
+
+                    data.boxes.forEach(item => {
+                        if (item.id === cell.cells[0].value.id) {
+                            item.header.collapse = cell.cells[0].collapsed;
+                        }
+                    })
+
+                    localStorage.setItem("graph", JSON.stringify(data))
+
+                    console.log(cell.cells[0], cell.cells[0].geometry.width, cell.cells[0].geometry.height, "Cell was folded");
+                });
+
 
                 //Collapsed/ icon override
                 graph.collapsedImage = new mxImage('./icons/arrow-right.svg', 24, 24);
@@ -697,7 +714,8 @@
                                     "size": {
                                         "width": 345,
                                         "height": 523
-                                    }
+                                    },
+                                    "collapse": false
                                 },
                                 "body": {
                                     "rows": [
@@ -733,7 +751,9 @@
                                     "size": {
                                         "width": 345,
                                         "height": 523
-                                    }
+                                    },
+                                    "collapse": false
+
                                 },
                                 "body": {
                                     "json": {
@@ -768,7 +788,6 @@
                                     }
                                 }
                             },
-
                         ]
                     }
 
@@ -782,15 +801,18 @@
                 graph.getModel().beginUpdate();
                 try {
 
-
-
-
-
                     data.boxes.forEach((item, index) => {
-                        let vertex = graph.insertVertex(parent, item.id, item, item.header.position.left,
-                            item.header.position.top, item.header.size.width, item.header.size.height);
+                        let alternativeHeight = item.header.collapse ? item.header.size.height : 44;
+                        let height = item.header.collapse ? 44 : item.header.size.height;
 
-                        vertex.geometry.alternateBounds = new mxRectangle(0, 0, item.header.size.width, 44);
+
+                        let vertex = graph.insertVertex(parent, item.id, item, item.header.position.left,
+                            item.header.position.top, item.header.size.width, height);
+
+                        vertex.geometry.alternateBounds = new mxRectangle(0, 0, item.header.size.width, alternativeHeight);
+
+                        vertex.collapsed = item.header.collapse
+
                     })
 
 
@@ -814,7 +836,12 @@
                                         let vert = vertices.find(v => v.id === box_id[0])
 
 
-                                        jsonList.push({targetId: box_id[0], targetRow: 1, sourceId: id, sourceRow: indexRow})
+                                        jsonList.push({
+                                            targetId: box_id[0],
+                                            targetRow: 1,
+                                            sourceId: id,
+                                            sourceRow: indexRow
+                                        })
                                     })
                                 }
                             })

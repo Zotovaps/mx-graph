@@ -101,7 +101,7 @@
             padding: 10px 10px 10px 20px;
 
             border-radius: 30px;
-            background: #0A1650;
+            background: transparent;
             box-shadow: 1px 1px 2px 0px rgba(52, 65, 113, 0.10);
 
 
@@ -338,34 +338,6 @@
                 //Collapsed/ icon override
                 graph.collapsedImage = new mxImage('./icons/arrow-right.svg', 24, 24);
                 graph.expandedImage = new mxImage('./icons/arrow-left.svg', 24, 24);
-
-
-                // Использует периметр объекта (ниже) по умолчанию
-                // (Uses the entity perimeter (below) as default)
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_PERIMETER] = mxPerimeter.EntityPerimeter;
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_FILLCOLOR] = '#FFFFFF';
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_STROKECOLOR] = '#D2D7E3';
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_STROKEWIDTH] = 1;
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_ROUNDED] = 1;
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_ABSOLUTE_ARCSIZE] = 1;
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_ARCSIZE] = "16";
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_FONTSIZE] = "14";
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_FONTCOLOR] = "#24293D";
-
-                var collapsedStyle = { ...graph.stylesheet.getDefaultVertexStyle()};
-
-                collapsedStyle[mxConstants.STYLE_ARCSIZE] = "60";
-                collapsedStyle[mxConstants.STYLE_FILLCOLOR] = '#0A1650';
-                collapsedStyle[mxConstants.STYLE_FONTCOLOR] = "#FFFFFF";
-
-                graph.getStylesheet().putCellStyle('defaultCollapsedVertex', collapsedStyle);
-
-
-                // Используется для меток HTML, которые занимают все пространство вершин
-                // (см. graph.cellRenderer.redrawLabel ниже для синхронизации размера)
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_OVERFLOW] = 'fill';
 
 
                 // Использует стиль ребра объекта по умолчанию

@@ -58,6 +58,26 @@ mxGraph.prototype.applyCustomSetting = function () {
     this.getStylesheet().putCellStyle('vertex', style);
 }
 /**
+ * Function: isCellResizable
+ *
+ * Returns true if the given cell is resizable. This returns
+ * <cellsResizable> for all given cells if <isCellLocked> does not return
+ * true for the given cell and its style does not specify
+ * <mxConstants.STYLE_RESIZABLE> to be 0.
+ *
+ * Parameters:
+ *
+ * cell - <mxCell> whose resizable state should be returned.
+ */
+mxGraph.prototype.isCellResizable = function(cell)
+{
+    var style = this.getCurrentCellStyle(cell);
+
+    return this.isCellsResizable() && !this.isCellLocked(cell) &&
+        !this.isCellCollapsed(cell) &&
+        mxUtils.getValue(style, mxConstants.STYLE_RESIZABLE, '1') != '0';
+};
+/**
  * Function: createSelectionShape
  *
  * Creates the shape used to draw the selection border.

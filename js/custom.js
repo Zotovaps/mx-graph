@@ -1,3 +1,91 @@
+/**
+ * Function: createSelectionShape
+ *
+ * Apply a custom Settings
+ */
+mxGraph.prototype.applyCustomSetting = function () {
+    /**
+     * Class: mxConstants
+     *
+     * Defines various global constants.
+     *
+     * Variable: DEFAULT_HOTSPOT
+     *
+     */
+
+    mxConstants.VERTEX_SELECTION_COLOR = "#2D49D7";
+    mxConstants.VERTEX_SELECTION_DASHED = false;
+    mxConstants.VERTEX_SELECTION_STROKEWIDTH = 2;
+
+    let style = {};
+
+    style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
+    style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
+    style[mxConstants.STYLE_PERIMETER] = mxPerimeter.EntityPerimeter;
+    style[mxConstants.STYLE_FILLCOLOR] = '#0A1650';
+    style[mxConstants.STYLE_STROKECOLOR] = '#D2D7E3';
+    style[mxConstants.STYLE_STROKEWIDTH] = 1;
+    style[mxConstants.STYLE_ROUNDED] = 1;
+    style[mxConstants.STYLE_ABSOLUTE_ARCSIZE] = 1;
+    style[mxConstants.STYLE_ARCSIZE] = "60";
+    style[mxConstants.STYLE_FONTSIZE] = "14";
+    style[mxConstants.STYLE_FONTCOLOR] = "#FFFFFF";
+
+// Используется для меток HTML, которые занимают все пространство вершин
+// (см. graph.cellRenderer.redrawLabel ниже для синхронизации размера)
+    style[mxConstants.STYLE_OVERFLOW] = 'fill';
+    this.getStylesheet().putCellStyle('collapsedVertex', style);
+
+    style = {};
+
+// Использует периметр объекта (ниже) по умолчанию
+// (Uses the entity perimeter (below) as default)
+    style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
+    style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
+    style[mxConstants.STYLE_PERIMETER] = mxPerimeter.EntityPerimeter;
+    style[mxConstants.STYLE_FILLCOLOR] = '#FFFFFF';
+    style[mxConstants.STYLE_STROKECOLOR] = '#D2D7E3';
+    style[mxConstants.STYLE_STROKEWIDTH] = 1;
+    style[mxConstants.STYLE_ROUNDED] = 1;
+    style[mxConstants.STYLE_ABSOLUTE_ARCSIZE] = 1;
+    style[mxConstants.STYLE_ARCSIZE] = "16";
+    style[mxConstants.STYLE_FONTSIZE] = "14";
+    style[mxConstants.STYLE_FONTCOLOR] = "#24293D";
+
+// Используется для меток HTML, которые занимают все пространство вершин
+// (см. graph.cellRenderer.redrawLabel ниже для синхронизации размера)
+    style[mxConstants.STYLE_OVERFLOW] = 'fill';
+    this.getStylesheet().putCellStyle('vertex', style);
+}
+/**
+ * Function: createSelectionShape
+ *
+ * Creates the shape used to draw the selection border.
+ */
+mxVertexHandler.prototype.createSelectionShape = function (bounds) {
+    var shape = new mxRectangleShape(
+        mxRectangle.fromRectangle(bounds),
+        null, this.getSelectionColor());
+    shape.strokewidth = this.getSelectionStrokeWidth();
+    shape.isDashed = this.isSelectionDashed();
+
+
+    shape.isRounded = 1;
+
+    shape.style = new Object()
+
+    shape.style.absoluteArcSize = this.state.style.absoluteArcSize;
+    shape.style.arcSize = this.state.style.arcSize;
+
+    return shape;
+};
+
+/**
+ * Function: getControlBounds
+ *
+ * Returns the bounds to be used to draw the control (folding icon) of the
+ * given state.
+ */
 mxCellRenderer.prototype.getControlBounds = function (state, w, h) {
     if (state.control != null) {
         var s = state.view.scale;
@@ -93,26 +181,7 @@ mxGraph.prototype.getCellStyle = function (cell) {
  *
  */
 mxStylesheet.prototype.getCollapsedVertexStyle = function () {
-    let style = {};
-
-    style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
-    style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
-    style[mxConstants.STYLE_PERIMETER] = mxPerimeter.EntityPerimeter;
-    style[mxConstants.STYLE_FILLCOLOR] = '#0A1650';
-    style[mxConstants.STYLE_STROKECOLOR] = '#D2D7E3';
-    style[mxConstants.STYLE_STROKEWIDTH] = 1;
-    style[mxConstants.STYLE_ROUNDED] = 1;
-    style[mxConstants.STYLE_ABSOLUTE_ARCSIZE] = 1;
-    style[mxConstants.STYLE_ARCSIZE] = "60";
-    style[mxConstants.STYLE_FONTSIZE] = "14";
-    style[mxConstants.STYLE_FONTCOLOR] = "#FFFFFF";
-
-    // Используется для меток HTML, которые занимают все пространство вершин
-    // (см. graph.cellRenderer.redrawLabel ниже для синхронизации размера)
-    style[mxConstants.STYLE_OVERFLOW] = 'fill';
-
-    return style;
-    // return this.styles['defaultCollapsedVertex'];
+    return this.styles['collapsedVertex'];
 };
 
 /**
@@ -121,25 +190,5 @@ mxStylesheet.prototype.getCollapsedVertexStyle = function () {
  * Returns the default style for not collapsed vertices.
  **/
 mxStylesheet.prototype.getVertexStyle = function () {
-    let style = {};
-
-    // Использует периметр объекта (ниже) по умолчанию
-    // (Uses the entity perimeter (below) as default)
-    style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
-    style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
-    style[mxConstants.STYLE_PERIMETER] = mxPerimeter.EntityPerimeter;
-    style[mxConstants.STYLE_FILLCOLOR] = '#FFFFFF';
-    style[mxConstants.STYLE_STROKECOLOR] = '#D2D7E3';
-    style[mxConstants.STYLE_STROKEWIDTH] = 1;
-    style[mxConstants.STYLE_ROUNDED] = 1;
-    style[mxConstants.STYLE_ABSOLUTE_ARCSIZE] = 1;
-    style[mxConstants.STYLE_ARCSIZE] = "16";
-    style[mxConstants.STYLE_FONTSIZE] = "14";
-    style[mxConstants.STYLE_FONTCOLOR] = "#24293D";
-
-    // Используется для меток HTML, которые занимают все пространство вершин
-    // (см. graph.cellRenderer.redrawLabel ниже для синхронизации размера)
-    style[mxConstants.STYLE_OVERFLOW] = 'fill';
-
-    return style;
+    return this.styles['vertex'];
 }

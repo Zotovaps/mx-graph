@@ -244,6 +244,8 @@
                 // Creates the graph inside the given container
                 var graph = new mxGraph(container);
 
+                graph.applyCustomSetting();
+
                 function updateStyle(state, hover) {
                     if (state.cell.collapsed) {
                         // state.style[mxConstants.STYLE_ARCSIZE] = "60";

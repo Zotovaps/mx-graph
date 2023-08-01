@@ -23,8 +23,6 @@ mxGraph.prototype.applyCustomSetting = function () {
     style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
     style[mxConstants.STYLE_PERIMETER] = mxPerimeter.EntityPerimeter;
     style[mxConstants.STYLE_FILLCOLOR] = '#0A1650';
-    style[mxConstants.STYLE_STROKECOLOR] = '#D2D7E3';
-    style[mxConstants.STYLE_STROKEWIDTH] = 1;
     style[mxConstants.STYLE_ROUNDED] = 1;
     style[mxConstants.STYLE_ABSOLUTE_ARCSIZE] = 1;
     style[mxConstants.STYLE_ARCSIZE] = "60";
@@ -78,6 +76,38 @@ mxGraph.prototype.isCellResizable = function(cell)
         mxUtils.getValue(style, mxConstants.STYLE_RESIZABLE, '1') != '0';
 };
 /**
+ * Function: createShape
+ *
+ * Creates and returns the highlight shape for the given state.
+ */
+mxCellHighlight.prototype.createShape = function()
+{
+    var shape = this.graph.cellRenderer.createShape(this.state);
+
+    shape.svgStrokeTolerance = this.graph.tolerance;
+    shape.points = this.state.absolutePoints;
+    shape.apply(this.state);
+    shape.stroke = this.highlightColor;
+    shape.opacity = this.opacity;
+    shape.isDashed = this.dashed;
+    shape.isShadow = false;
+
+    shape.dialect = (this.graph.dialect != mxConstants.DIALECT_SVG) ? mxConstants.DIALECT_VML : mxConstants.DIALECT_SVG;
+    shape.init(this.graph.getView().getOverlayPane());
+    mxEvent.redirectMouseEvents(shape.node, this.graph, this.state);
+
+    if (this.graph.dialect != mxConstants.DIALECT_SVG)
+    {
+        shape.pointerEvents = false;
+    }
+    else
+    {
+        shape.svgPointerEvents = 'stroke';
+    }
+
+    return shape;
+};
+/**
  * Function: createSelectionShape
  *
  * Creates the shape used to draw the selection border.
@@ -89,13 +119,14 @@ mxVertexHandler.prototype.createSelectionShape = function (bounds) {
     shape.strokewidth = this.getSelectionStrokeWidth();
     shape.isDashed = this.isSelectionDashed();
 
+    shape.apply(this.state);
 
-    shape.isRounded = 1;
-
-    shape.style = new Object()
-
-    shape.style.absoluteArcSize = this.state.style.absoluteArcSize;
-    shape.style.arcSize = this.state.style.arcSize;
+    // shape.isRounded = this.state.style.rounded;
+    //
+    // shape.style = new Object()
+    //
+    // shape.style.absoluteArcSize = this.state.style.absoluteArcSize;
+    // shape.style.arcSize = this.state.style.arcSize ;
 
     return shape;
 };

@@ -340,8 +340,6 @@
                     })
 
                     localStorage.setItem("graph", JSON.stringify(data))
-
-                    console.log(cell.cells[0], cell.cells[0].geometry.x, cell.cells[0].geometry.y, "Cell was moved");
                 });
 
                 graph.addListener(mxEvent.CELLS_RESIZED, function (sender, evt) {
@@ -364,8 +362,6 @@
                     })
 
                     localStorage.setItem("graph", JSON.stringify(data))
-
-                    console.log(cell.cells[0], cell.cells[0].geometry.width, cell.cells[0].geometry.height, "Cell was resized");
                 });
 
                 graph.addListener(mxEvent.FOLD_CELLS, function (sender, evt) {
@@ -381,8 +377,20 @@
                     })
 
                     localStorage.setItem("graph", JSON.stringify(data))
+                });
 
-                    console.log(cell.cells[0], cell.cells[0].geometry.width, cell.cells[0].geometry.height, "Cell was folded");
+                graph.addListener(mxEvent.CELL_CONNECTED, function (sender, evt) {
+                    var cell = evt.getProperties("cell");
+
+                    if (!verticesEdge.find(e => e.id === cell.edge.id) && cell.source) {
+
+                        let sourceIndex = Number(cell.edge.value.attributes['sourceRow']?.value)
+                        let targetIndex = Number(cell.edge.value.attributes['targetRow']?.value)
+
+
+                        console.log(cell.edge, sourceIndex, targetIndex, "Cell was CONNECT", verticesEdge);
+
+                    }
                 });
 
 
@@ -718,6 +726,24 @@
                                                     }
                                                 }
                                             ]
+                                        },
+                                        {
+                                            "columns": [
+                                                {
+                                                    "item": {
+                                                        "box_id": "item2",
+                                                        "caption": "bbb",
+                                                        "box_links": [
+                                                            {
+                                                                "link": {
+                                                                    "typelink": 1,
+                                                                    "box_id": "box_json_example:item1"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            ]
                                         }
                                     ]
                                 }
@@ -804,6 +830,7 @@
                     var vertices = graph.getChildVertices(parent);
 
 
+
                     const recursiveJson = function (key, data, id) {
                         indexRow++
                         if (typeof (data) === "object") {
@@ -855,6 +882,9 @@
                             vertices.find(v => v.id === item.sourceId), vertices.find(v => v.id === item.targetId));
 
                     })
+
+                    console.log(graph.getChildEdges(parent), "edges")
+
 
                 } finally {
                     // Updates the display

@@ -2,6 +2,17 @@
 <html>
 
 <head>
+
+    <style type="text/css" media="screen">
+        body {
+            margin: 0;
+            padding: 0;
+
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+
     <script type="text/javascript">
         mxBasePath = '../src';
     </script>
@@ -10,6 +21,7 @@
     <script type="text/javascript" src="../src/js/mxClient.js"></script>
     <script type="text/javascript" src="../js/jsonToXml.js"></script>
     <script type="text/javascript" src="../js/xmlToJson.js"></script>
+    <script type="text/javascript" src="../js/custom.js"></script>
 
     <script type="text/javascript">
 
@@ -129,9 +141,6 @@
                 container.innerText = jsonToXml(JSON.parse(localStorage.getItem("graph")))
             }
 
-
-
-
             console.log(container.innerText)
             drawGraph(container)
         }
@@ -150,22 +159,95 @@
                     graph.centerZoom = false;
                     graph.setTooltips(false);
                     graph.setEnabled(true);
-                    graph.setConnectable(true)
-
-                    // Changes the default style for edges "in-place"
-                    var style = graph.getStylesheet().getDefaultEdgeStyle();
-                    style[mxConstants.STYLE_EDGE] = mxEdgeStyle.ElbowConnector;
+                    graph.setCellsDisconnectable(false);
+                    graph.setAllowDanglingEdges(false);
+                    graph.setCellsEditable(false);
+                    graph.setConnectable(true);
 
                     // Enables panning with left mouse button
-                    // graph.panningHandler.useLeftButtonForPanning = true;
+                    graph.panningHandler.useLeftButtonForPanning = true;
                     // graph.panningHandler.ignoreCell = true;
-                    // graph.container.style.cursor = 'move';
-                    graph.setPanning(false);
+                    graph.container.style.cursor = 'move';
+                    graph.setPanning(true);
 
-                    graph.resizeContainer = true;
+
+                    // graph.resizeContainer = true;
+                    // graph.resizeContainer = false;
+                    graph.centerZoom = false;
+
+
+
+                    // Стили кастомные
+                    var style = new Object();
+                    style[mxConstants.STYLE_SHAPE] =  mxConstants.SHAPE_SWIMLANE;
+                    style[mxConstants.STYLE_FILLCOLOR] = '#FFFFFF';
+                    style[mxConstants.STYLE_STROKECOLOR] = '#000000';
+                    style[mxConstants.STYLE_FONTCOLOR] = '#000000';
+                    style[mxConstants.STYLE_ROUNDED] = true;
+
+                    style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
+                    style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
+                    style[mxConstants.STYLE_PERIMETER] = mxPerimeter.EntityPerimeter;
+                    style[mxConstants.STYLE_FILLCOLOR] = '#FFFFFF';
+                    style[mxConstants.STYLE_STROKECOLOR] = '#D2D7E3';
+                    style[mxConstants.STYLE_STROKEWIDTH] = 1;
+                    style[mxConstants.STYLE_ROUNDED] = 1;
+                    style[mxConstants.STYLE_ABSOLUTE_ARCSIZE] = 1;
+                    style[mxConstants.STYLE_ARCSIZE] = "16";
+                    style[mxConstants.STYLE_FONTSIZE] = "14";
+                    style[mxConstants.STYLE_FONTCOLOR] = "#24293D";
+
+
+// Используется для меток HTML, которые занимают все пространство вершин
+// (см. graph.cellRenderer.redrawLabel ниже для синхронизации размера)
+                    style[mxConstants.STYLE_OVERFLOW] = 'fill';
+
+                    graph.getStylesheet().putCellStyle('boxstyle', style);
+
+
+                    // Changes the default style for edges "in-place"
+                    // Использует стиль ребра объекта по умолчанию
+                    // (Uses the entity edge style as default)
+                    mxMarker.addMarker('custom', function (canvas, shape, type, pe, unitX, unitY, size, source, sw, filled) {
+                        var a = size / 2;
+
+                        var pt = pe.clone();
+                        pe.x -= unitX * a;
+                        pe.y -= unitY * a;
+
+                        return function () {
+                            canvas.state.fillColor = "#FFFFFF"
+                            canvas.state.strokeWidth = 3
+
+                            canvas.ellipse(pt.x - a, pt.y - a, size, size);
+
+                            if (filled) {
+                                canvas.fillAndStroke();
+                            } else {
+                                canvas.stroke();
+                            }
+                        };
+                    })
+
+                    graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_EDGE] = mxEdgeStyle.ElbowConnector;
+                    graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_CONNECTOR;
+                    graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_ROUNDED] = 1;
+                    graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_STROKECOLOR] = '#2D49D7';
+                    graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_FONTCOLOR] = '#446299';
+                    graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_STROKEWIDTH] = 2;
+                    graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_ENDSIZE] = 15;
+                    graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_STARTSIZE] = 15;
+                    graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_ENDARROW] = 'custom';
+                    graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_STARTARROW] = 'custom';
+
+
+
+
 
                     decoder.decode(node, graph.getModel());
-                    graph.resizeContainer = false;
+
+                    console.log(graph.getChildVertices()[0], "ss")
+
 
                     // Adds zoom buttons in top, left corner
                     var buttons = document.createElement('div');
@@ -225,6 +307,7 @@
                         // mxUtils.popup(mxUtils.getXml(node), true);
                     });
 
+
                     if (container.nextSibling != null) {
                         container.parentNode.insertBefore(buttons, container.nextSibling);
                     } else {
@@ -239,8 +322,7 @@
 </head>
 <body onload="main(document.getElementById('graphContainer'))">
 
-<div id="graphContainer"
-     style="cursor:default;position:absolute;top:30px;left:0px;bottom:0px;right:0px;">
+<div id="graphContainer" style="cursor:default; width: 100%; height: 100%; overflow: hidden;">
 </div>
 
 </body>

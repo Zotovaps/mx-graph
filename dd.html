@@ -10,7 +10,7 @@
     <script type="text/javascript" src="../src/js/mxClient.js"></script>
 
     <script type="text/javascript">
-        function main(container){
+        function main(container) {
             let count = 0;
 
             const json = {
@@ -36,6 +36,80 @@
                                             "item": {
                                                 "box_id": "item1",
                                                 "caption": "aaa",
+                                                "box_links": [
+                                                    {
+                                                        "link": {
+                                                            "typelink": 1,
+                                                            "box_id": "box_json_example:item1"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "item": {
+                                                "box_id": "item2",
+                                                "caption": "bbb",
+                                                "box_links": [
+                                                    {
+                                                        "link": {
+                                                            "typelink": 1,
+                                                            "box_id": "box_json_example:item1"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "item": {
+                                                "box_id": "item3",
+                                                "caption": "ccc",
+                                                "box_links": [
+                                                    {
+                                                        "link": {
+                                                            "typelink": 1,
+                                                            "box_id": "box_json_example:item1"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "columns": [
+                                        {
+                                            "item": {
+                                                "box_id": "item11",
+                                                "caption": "ddd",
+                                                "box_links": [
+                                                    {
+                                                        "link": {
+                                                            "typelink": 1,
+                                                            "box_id": "box_json_example:item1"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "item": {
+                                                "box_id": "item22",
+                                                "caption": "eee",
+                                                "box_links": [
+                                                    {
+                                                        "link": {
+                                                            "typelink": 1,
+                                                            "box_id": "box_json_example:item1"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "item": {
+                                                "box_id": "item33",
+                                                "caption": "fff",
                                                 "box_links": [
                                                     {
                                                         "link": {
@@ -113,10 +187,9 @@
 
             json.boxes.forEach((item, index) => {
                 const newCell = doc.createElement("mxCell")
-                newCell.setAttribute("id", (count++).toString());
+                newCell.setAttribute("id", item.id);
                 newCell.setAttribute("parent", mxCell1.getAttribute("id"));
                 newCell.setAttribute("value", item.header.caption)
-                newCell.setAttribute("style", "rounded=0;whiteSpace=wrap;html=1;")
                 newCell.setAttribute("vertex", "1")
 
                 const newGeometry = doc.createElement("mxGeometry")
@@ -126,11 +199,75 @@
                 newGeometry.setAttribute("width", item.header.size.width);
                 newGeometry.setAttribute("height", item.header.size.height);
 
+
+                item.body && Object.keys(item.body).forEach(k => {
+                    if (k === "rows") {
+                        newCell.setAttribute("style", "shape=table;")
+                        newGeometry.setAttribute("width", (60*item.body.rows[0].columns.length).toString());
+                        newGeometry.setAttribute("height", (40 + (40 * item.body.rows.length)).toString());
+
+                        item.body.rows.forEach((row, rowIndex) => {
+                            const rowCell = doc.createElement("mxCell")
+                            rowCell.setAttribute("id", (count++).toString());
+                            rowCell.setAttribute("parent", newCell.getAttribute("id"));
+                            rowCell.setAttribute("vertex", "1")
+                            rowCell.setAttribute("style", "shape=partialRectangle;")
+
+
+                            const rowGeometry = doc.createElement("mxGeometry")
+                            rowGeometry.setAttribute("as", "geometry");
+                            rowGeometry.setAttribute("y", (40 + (40 * rowIndex)).toString());
+                            rowGeometry.setAttribute("height", "40");
+                            rowGeometry.setAttribute("width", (60 * row.columns.length).toString());
+
+                            rowCell.appendChild(rowGeometry)
+                            row.columns.forEach((column, columnIndex) => {
+                                const columnCell = doc.createElement("mxCell")
+                                columnCell.setAttribute("id", column.item.box_id);
+                                columnCell.setAttribute("parent", rowCell.getAttribute("id"));
+                                columnCell.setAttribute("vertex", "1")
+                                columnCell.setAttribute("value", column.item.caption)
+                                columnCell.setAttribute("style", "shape=partialRectangle;")
+
+
+                                const columnGeometry = doc.createElement("mxGeometry")
+                                columnGeometry.setAttribute("as", "geometry");
+                                columnGeometry.setAttribute("width", "60");
+                                columnGeometry.setAttribute("height", "40");
+                                columnIndex > 0 && columnGeometry.setAttribute("x", (60 * columnIndex).toString())
+
+                                columnCell.appendChild(columnGeometry)
+                                root.appendChild(columnCell)
+
+                            })
+
+                            root.appendChild(rowCell)
+
+                        })
+
+                    }
+                })
+
+
                 newCell.appendChild(newGeometry)
-
-
                 root.appendChild(newCell)
             })
+
+
+            const newCell = doc.createElement("mxCell")
+            newCell.setAttribute("id", (count++).toString());
+            newCell.setAttribute("parent", mxCell1.getAttribute("id"));
+            newCell.setAttribute("edge", "1");
+            newCell.setAttribute("source", "item1");
+            newCell.setAttribute("target", "box_json_example");
+
+
+            const newGeometry = doc.createElement("mxGeometry")
+            newGeometry.setAttribute("as", "geometry");
+            newCell.appendChild(newGeometry)
+
+
+            root.appendChild(newCell)
 
 
             root.appendChild(mxCell0);

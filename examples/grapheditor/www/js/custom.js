@@ -1,5 +1,4 @@
-
-mxGraph.prototype.applyCustomSetting = function (){
+mxGraph.prototype.applyCustomSetting = function () {
     this.collapsedImage = new mxImage('./icons/arrow-right.svg', 24, 24);
     this.expandedImage = new mxImage('./icons/arrow-left.svg', 24, 24);
 }
@@ -41,9 +40,17 @@ mxCellRenderer.prototype.getControlBounds = function (state, w, h) {
             }
         }
 
-        return (state.view.graph.getModel().isEdge(state.cell)) ?
-            new mxRectangle(Math.round(cx - w / 2 * s), Math.round(cy - h / 2 * s), Math.round(w * s), Math.round(h * s))
-            : new mxRectangle(Math.round(cx - w / 2 * s), Math.round(cy - h / 2 * s), Math.round(w * s), Math.round(h * s));
+        if (state.style.startSize) {
+            debugger
+            return (state.view.graph.getModel().isEdge(state.cell)) ?
+                new mxRectangle(Math.round(cx), Math.round(state.y - (h - state.style.startSize) / 2 * s), Math.round(w * s), Math.round(h * s))
+                : new mxRectangle(Math.round(cx), Math.round(state.y - (h - state.style.startSize) / 2 * s), Math.round(w * s), Math.round(h * s));
+        } else {
+            return (state.view.graph.getModel().isEdge(state.cell)) ?
+                new mxRectangle(Math.round(cx - w / 2 * s), Math.round(cy - h / 2 * s), Math.round(w * s), Math.round(h * s))
+                : new mxRectangle(Math.round(cx - w / 2 * s), Math.round(cy - h / 2 * s), Math.round(w * s), Math.round(h * s));
+        }
+
     }
 
     return null;

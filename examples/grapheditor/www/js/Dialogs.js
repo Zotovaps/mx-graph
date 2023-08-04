@@ -542,7 +542,6 @@ var EditDiagramDialog = function(editorUi)
 
 
 	var exportBtn = mxUtils.button("Json -> Xml", () => {
-        debugger
         textarea.value = jsonToXml(JSON.parse(textarea.value))
 	})
 	exportBtn.className = 'geBtn';

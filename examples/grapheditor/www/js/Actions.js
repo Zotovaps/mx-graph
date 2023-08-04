@@ -1228,6 +1228,20 @@ Actions.prototype.init = function()
 			ui.setDefaultStyle(graph.getSelectionCell());
 		}
 	}, null, null, Editor.ctrlKey + '+Shift+D');
+	this.addAction('setCustomStyle', function()
+	{
+		const cell  = graph.getSelectionCells()
+		const newStyle = "rounded=1;whiteSpace=wrap;html=1;"
+		graph.setCellStyle(mxUtils.trim(newStyle), cell);
+		// cell.style = "rounded=1;whiteSpace=wrap;html=1;"
+
+
+
+		// if (graph.isEnabled() && !graph.isSelectionEmpty())
+		// {
+		// 	ui.setDefaultStyle(graph.getSelectionCell());
+		// }
+	}, null, null, null);
 	this.addAction('clearDefaultStyle', function()
 	{
 		if (graph.isEnabled())

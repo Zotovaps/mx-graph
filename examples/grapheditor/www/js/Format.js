@@ -4282,6 +4282,9 @@ StyleFormatPanel.prototype.init = function()
 	}
 	
 	this.container.appendChild(this.addStyleOps(opsPanel));
+
+	this.container.appendChild(this.addCustomOps(this.createPanel()))
+
 };
 
 /**
@@ -4415,6 +4418,31 @@ StyleFormatPanel.prototype.addSvgRule = function(container, rule, svg, styleElem
 		addStyleRule(rule, 'stroke', mxResources.get('line'));
 		addStyleRule(rule, 'stop-color', mxResources.get('gradient'));
 	}
+};
+
+/**
+ * Adds the label menu items to the given menu and parent.
+ */
+StyleFormatPanel.prototype.addCustomOps = function(div)
+{
+	var ss = this.format.getSelectionState();
+	var btn = null;
+
+	if (this.editorUi.editor.graph.getSelectionCount() == 1)
+	{
+		btn = mxUtils.button("Set Custom Style", mxUtils.bind(this, function(evt)
+		{
+			this.editorUi.actions.get('setCustomStyle').funct();
+		}));
+
+		// btn.setAttribute('title', mxResources.get('editStyle') + ' (' + this.editorUi.actions.get('editStyle').shortcut + ')');
+		btn.style.width = '202px';
+		btn.style.marginBottom = '2px';
+
+		div.appendChild(btn);
+	}
+
+	return div;
 };
 
 /**

@@ -20,15 +20,63 @@
               {
                 "item": {
                   "box_id": "item1",
-                  "caption": "aaa",
-                  "box_links": [
-                    {
-                      "link": {
-                        "typelink": 1,
-                        "box_id": "box_json_example:item1"
-                      }
-                    }
-                  ]
+                  "caption": "aaa"
+                }
+              },
+              {
+                "item": {
+                  "box_id": "item2",
+                  "caption": "bbb"
+                }
+              },
+              {
+                "item": {
+                  "box_id": "item3",
+                  "caption": "ccc"
+                }
+              }
+            ]
+          },
+          {
+            "columns": [
+              {
+                "item": {
+                  "box_id": "item4",
+                  "caption": "ddd"
+                }
+              },
+              {
+                "item": {
+                  "box_id": "item5",
+                  "caption": "eee"
+                }
+              },
+              {
+                "item": {
+                  "box_id": "item6",
+                  "caption": "fff"
+                }
+              }
+            ]
+          },
+          {
+            "columns": [
+              {
+                "item": {
+                  "box_id": "item7",
+                  "caption": "ggg"
+                }
+              },
+              {
+                "item": {
+                  "box_id": "item8",
+                  "caption": "hhh"
+                }
+              },
+              {
+                "item": {
+                  "box_id": "item9",
+                  "caption": "kkk"
                 }
               }
             ]

@@ -15,118 +15,123 @@
 
         function main(container) {
 
-            const json = {
-                "boxes": [
-                    {
-                        "body": {
-                            "rows": [
-                                {
-                                    "id": "2",
-                                    "type": "row",
-                                    "columns": [
-                                        {
-                                            "item": {
-                                                "type": "column",
-                                                "box_id": "item1",
-                                                "caption": "aaa"
-                                            }
-                                        },
-                                        {
-                                            "item": {
-                                                "type": "column",
-                                                "box_id": "item2",
-                                                "caption": "bbb"
-                                            }
-                                        },
-                                        {
-                                            "item": {
-                                                "type": "column",
-                                                "box_id": "item3",
-                                                "caption": "ccc",
-                                                "box_links": [
-                                                    {
-                                                        "link": {
-                                                            "typelink": 1,
-                                                            "box_id": "box_json_example"
+            if (localStorage.getItem("graph") === null) {
+                const json = {
+                    "boxes": [
+                        {
+                            "body": {
+                                "rows": [
+                                    {
+                                        "id": "2",
+                                        "type": "row",
+                                        "columns": [
+                                            {
+                                                "item": {
+                                                    "type": "column",
+                                                    "box_id": "item1",
+                                                    "caption": "aaa"
+                                                }
+                                            },
+                                            {
+                                                "item": {
+                                                    "type": "column",
+                                                    "box_id": "item2",
+                                                    "caption": "bbb"
+                                                }
+                                            },
+                                            {
+                                                "item": {
+                                                    "type": "column",
+                                                    "box_id": "item3",
+                                                    "caption": "ccc",
+                                                    "box_links": [
+                                                        {
+                                                            "link": {
+                                                                "typelink": 1,
+                                                                "box_id": "box_json_example"
+                                                            }
                                                         }
-                                                    }
-                                                ]
+                                                    ]
+                                                }
                                             }
-                                        }
-                                    ]
+                                        ]
+                                    },
+                                    {
+                                        "id": "4",
+                                        "type": "row",
+                                        "columns": [
+                                            {
+                                                "item": {
+                                                    "type": "column",
+                                                    "box_id": "item11",
+                                                    "caption": "ddd"
+                                                }
+                                            },
+                                            {
+                                                "item": {
+                                                    "type": "column",
+                                                    "box_id": "item22",
+                                                    "caption": "eee"
+                                                }
+                                            },
+                                            {
+                                                "item": {
+                                                    "type": "column",
+                                                    "box_id": "item33",
+                                                    "caption": "fff",
+                                                    "box_links": [
+                                                        {
+                                                            "link": {
+                                                                "typelink": 1,
+                                                                "box_id": "box_json_example"
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            "type": "table",
+                            "id": "box_rows_columns_example",
+                            "header": {
+                                "position": {
+                                    "top": "10",
+                                    "left": "100"
                                 },
-                                {
-                                    "id": "4",
-                                    "type": "row",
-                                    "columns": [
-                                        {
-                                            "item": {
-                                                "type": "column",
-                                                "box_id": "item11",
-                                                "caption": "ddd"
-                                            }
-                                        },
-                                        {
-                                            "item": {
-                                                "type": "column",
-                                                "box_id": "item22",
-                                                "caption": "eee"
-                                            }
-                                        },
-                                        {
-                                            "item": {
-                                                "type": "column",
-                                                "box_id": "item33",
-                                                "caption": "fff",
-                                                "box_links": [
-                                                    {
-                                                        "link": {
-                                                            "typelink": 1,
-                                                            "box_id": "box_json_example"
-                                                        }
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    ]
-                                }
-                            ]
+                                "size": {
+                                    "width": "180",
+                                    "height": "120"
+                                },
+                                "caption": "Test"
+                            }
                         },
-                        "type": "table",
-                        "id": "box_rows_columns_example",
-                        "header": {
-                            "position": {
-                                "top": "10",
-                                "left": "100"
-                            },
-                            "size": {
-                                "width": "180",
-                                "height": "120"
-                            },
-                            "caption": "Test"
+                        {
+                            "id": "box_json_example",
+                            "header": {
+                                "position": {
+                                    "top": "20",
+                                    "left": "420"
+                                },
+                                "size": {
+                                    "width": "150",
+                                    "height": "140"
+                                },
+                                "caption": "Test2"
+                            }
                         }
-                    },
-                    {
-                        "id": "box_json_example",
-                        "header": {
-                            "position": {
-                                "top": "20",
-                                "left": "420"
-                            },
-                            "size": {
-                                "width": "150",
-                                "height": "140"
-                            },
-                            "caption": "Test2"
-                        }
-                    }
-                ]
+                    ]
+                }
+                container.innerText = jsonToXml(json)
+            }
+            else {
+                container.innerText = jsonToXml(JSON.parse(localStorage.getItem("graph")))
             }
 
 
 
 
-            container.innerText = jsonToXml(json)
             console.log(container.innerText)
             drawGraph(container)
         }
@@ -215,7 +220,7 @@
                     addButton('save', function () {
                         var encoder = new mxCodec();
                         var node = encoder.encode(graph.getModel());
-                        console.log(xmlToJson(node))
+                        localStorage.setItem("graph", JSON.stringify(xmlToJson(node)));
 
                         // mxUtils.popup(mxUtils.getXml(node), true);
                     });

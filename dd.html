@@ -8,67 +8,46 @@
 
     <!-- Loads and initializes the library -->
     <script type="text/javascript" src="../src/js/mxClient.js"></script>
+    <script type="text/javascript" src="../js/jsonToXml.js"></script>
+    <script type="text/javascript" src="../js/xmlToJson.js"></script>
 
     <script type="text/javascript">
+
         function main(container) {
-            let count = 0;
 
             const json = {
                 "boxes": [
                     {
-                        "id": "box_rows_columns_example",
-                        "header": {
-                            "caption": "Test",
-                            "position": {
-                                "top": 10,
-                                "left": 100
-                            },
-                            "size": {
-                                "width": 345,
-                                "height": 523
-                            }
-                        },
                         "body": {
                             "rows": [
                                 {
+                                    "id": "2",
+                                    "type": "row",
                                     "columns": [
                                         {
                                             "item": {
+                                                "type": "column",
                                                 "box_id": "item1",
-                                                "caption": "aaa",
-                                                "box_links": [
-                                                    {
-                                                        "link": {
-                                                            "typelink": 1,
-                                                            "box_id": "box_json_example:item1"
-                                                        }
-                                                    }
-                                                ]
+                                                "caption": "aaa"
                                             }
                                         },
                                         {
                                             "item": {
+                                                "type": "column",
                                                 "box_id": "item2",
-                                                "caption": "bbb",
-                                                "box_links": [
-                                                    {
-                                                        "link": {
-                                                            "typelink": 1,
-                                                            "box_id": "box_json_example:item1"
-                                                        }
-                                                    }
-                                                ]
+                                                "caption": "bbb"
                                             }
                                         },
                                         {
                                             "item": {
+                                                "type": "column",
                                                 "box_id": "item3",
                                                 "caption": "ccc",
                                                 "box_links": [
                                                     {
                                                         "link": {
                                                             "typelink": 1,
-                                                            "box_id": "box_json_example:item1"
+                                                            "box_id": "box_json_example"
                                                         }
                                                     }
                                                 ]
@@ -77,44 +56,33 @@
                                     ]
                                 },
                                 {
+                                    "id": "4",
+                                    "type": "row",
                                     "columns": [
                                         {
                                             "item": {
+                                                "type": "column",
                                                 "box_id": "item11",
-                                                "caption": "ddd",
-                                                "box_links": [
-                                                    {
-                                                        "link": {
-                                                            "typelink": 1,
-                                                            "box_id": "box_json_example:item1"
-                                                        }
-                                                    }
-                                                ]
+                                                "caption": "ddd"
                                             }
                                         },
                                         {
                                             "item": {
+                                                "type": "column",
                                                 "box_id": "item22",
-                                                "caption": "eee",
-                                                "box_links": [
-                                                    {
-                                                        "link": {
-                                                            "typelink": 1,
-                                                            "box_id": "box_json_example:item1"
-                                                        }
-                                                    }
-                                                ]
+                                                "caption": "eee"
                                             }
                                         },
                                         {
                                             "item": {
+                                                "type": "column",
                                                 "box_id": "item33",
                                                 "caption": "fff",
                                                 "box_links": [
                                                     {
                                                         "link": {
                                                             "typelink": 1,
-                                                            "box_id": "box_json_example:item1"
+                                                            "box_id": "box_json_example"
                                                         }
                                                     }
                                                 ]
@@ -123,160 +91,43 @@
                                     ]
                                 }
                             ]
+                        },
+                        "type": "table",
+                        "id": "box_rows_columns_example",
+                        "header": {
+                            "position": {
+                                "top": "10",
+                                "left": "100"
+                            },
+                            "size": {
+                                "width": "180",
+                                "height": "120"
+                            },
+                            "caption": "Test"
                         }
                     },
                     {
                         "id": "box_json_example",
                         "header": {
-                            "caption": "Test2",
                             "position": {
-                                "top": 10,
-                                "left": 600
+                                "top": "20",
+                                "left": "420"
                             },
                             "size": {
-                                "width": 345,
-                                "height": 523
-                            }
-                        },
-                        "body": {
-                            "json": {
-                                "type": "basket",
-                                "beans": 47,
-                                "apples": 7,
-                                "oranges": 23,
-                                "brand": "ConvertSimple",
-                                "ratio": {
-                                    "box_id": "item1"
-                                },
-                                "fees": {
-                                    "cleaning": "$4.50",
-                                    "baking": "$27.30",
-                                    "commission": {
-                                        "box_links": [
-                                            {
-                                                "link": {
-                                                    "typelink": 2,
-                                                    "box_id": "box_rows_columns_example:item1"
-                                                }
-                                            }
-                                        ]
-                                    },
-                                    "descriptors": [
-                                        "clean",
-                                        "fresh",
-                                        "juicy",
-                                        "delicious"
-                                    ]
-                                }
-                            }
+                                "width": "150",
+                                "height": "140"
+                            },
+                            "caption": "Test2"
                         }
                     }
                 ]
             }
 
-            var doc = document.implementation.createDocument("", "", null);
-            var customMxGraphModel = doc.createElement("mxGraphModel");
-
-            var root = doc.createElement("root");
-            var mxCell0 = doc.createElement("mxCell");
-            mxCell0.setAttribute("id", (count++).toString());
-
-            var mxCell1 = doc.createElement("mxCell");
-            mxCell1.setAttribute("id", (count++).toString());
-            mxCell1.setAttribute("parent", mxCell0.getAttribute("id"));
-
-            json.boxes.forEach((item, index) => {
-                const newCell = doc.createElement("mxCell")
-                newCell.setAttribute("id", item.id);
-                newCell.setAttribute("parent", mxCell1.getAttribute("id"));
-                newCell.setAttribute("value", item.header.caption)
-                newCell.setAttribute("vertex", "1")
-
-                const newGeometry = doc.createElement("mxGeometry")
-                newGeometry.setAttribute("as", "geometry");
-                newGeometry.setAttribute("x", item.header.position.left);
-                newGeometry.setAttribute("y", item.header.position.top);
-                newGeometry.setAttribute("width", item.header.size.width);
-                newGeometry.setAttribute("height", item.header.size.height);
 
 
-                item.body && Object.keys(item.body).forEach(k => {
-                    if (k === "rows") {
-                        newCell.setAttribute("style", "shape=table;")
-                        newGeometry.setAttribute("width", (60*item.body.rows[0].columns.length).toString());
-                        newGeometry.setAttribute("height", (40 + (40 * item.body.rows.length)).toString());
 
-                        item.body.rows.forEach((row, rowIndex) => {
-                            const rowCell = doc.createElement("mxCell")
-                            rowCell.setAttribute("id", (count++).toString());
-                            rowCell.setAttribute("parent", newCell.getAttribute("id"));
-                            rowCell.setAttribute("vertex", "1")
-                            rowCell.setAttribute("style", "shape=partialRectangle;")
-
-
-                            const rowGeometry = doc.createElement("mxGeometry")
-                            rowGeometry.setAttribute("as", "geometry");
-                            rowGeometry.setAttribute("y", (40 + (40 * rowIndex)).toString());
-                            rowGeometry.setAttribute("height", "40");
-                            rowGeometry.setAttribute("width", (60 * row.columns.length).toString());
-
-                            rowCell.appendChild(rowGeometry)
-                            row.columns.forEach((column, columnIndex) => {
-                                const columnCell = doc.createElement("mxCell")
-                                columnCell.setAttribute("id", column.item.box_id);
-                                columnCell.setAttribute("parent", rowCell.getAttribute("id"));
-                                columnCell.setAttribute("vertex", "1")
-                                columnCell.setAttribute("value", column.item.caption)
-                                columnCell.setAttribute("style", "shape=partialRectangle;")
-
-
-                                const columnGeometry = doc.createElement("mxGeometry")
-                                columnGeometry.setAttribute("as", "geometry");
-                                columnGeometry.setAttribute("width", "60");
-                                columnGeometry.setAttribute("height", "40");
-                                columnIndex > 0 && columnGeometry.setAttribute("x", (60 * columnIndex).toString())
-
-                                columnCell.appendChild(columnGeometry)
-                                root.appendChild(columnCell)
-
-                            })
-
-                            root.appendChild(rowCell)
-
-                        })
-
-                    }
-                })
-
-
-                newCell.appendChild(newGeometry)
-                root.appendChild(newCell)
-            })
-
-
-            const newCell = doc.createElement("mxCell")
-            newCell.setAttribute("id", (count++).toString());
-            newCell.setAttribute("parent", mxCell1.getAttribute("id"));
-            newCell.setAttribute("edge", "1");
-            newCell.setAttribute("source", "item1");
-            newCell.setAttribute("target", "box_json_example");
-
-
-            const newGeometry = doc.createElement("mxGeometry")
-            newGeometry.setAttribute("as", "geometry");
-            newCell.appendChild(newGeometry)
-
-
-            root.appendChild(newCell)
-
-
-            root.appendChild(mxCell0);
-            root.appendChild(mxCell1);
-            customMxGraphModel.appendChild(root);
-            doc.appendChild(customMxGraphModel)
-
-
-            container.innerText = doc.documentElement.outerHTML
+            container.innerText = jsonToXml(json)
+            console.log(container.innerText)
             drawGraph(container)
         }
 
@@ -293,17 +144,18 @@
                     var graph = new mxGraph(container);
                     graph.centerZoom = false;
                     graph.setTooltips(false);
-                    graph.setEnabled(false);
+                    graph.setEnabled(true);
+                    graph.setConnectable(true)
 
                     // Changes the default style for edges "in-place"
                     var style = graph.getStylesheet().getDefaultEdgeStyle();
                     style[mxConstants.STYLE_EDGE] = mxEdgeStyle.ElbowConnector;
 
                     // Enables panning with left mouse button
-                    graph.panningHandler.useLeftButtonForPanning = true;
-                    graph.panningHandler.ignoreCell = true;
-                    graph.container.style.cursor = 'move';
-                    graph.setPanning(true);
+                    // graph.panningHandler.useLeftButtonForPanning = true;
+                    // graph.panningHandler.ignoreCell = true;
+                    // graph.container.style.cursor = 'move';
+                    graph.setPanning(false);
 
                     graph.resizeContainer = true;
 
@@ -358,6 +210,14 @@
 
                     addButton('-', function () {
                         graph.zoomOut();
+                    });
+
+                    addButton('save', function () {
+                        var encoder = new mxCodec();
+                        var node = encoder.encode(graph.getModel());
+                        console.log(xmlToJson(node))
+
+                        // mxUtils.popup(mxUtils.getXml(node), true);
                     });
 
                     if (container.nextSibling != null) {

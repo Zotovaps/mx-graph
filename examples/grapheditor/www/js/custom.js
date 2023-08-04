@@ -41,7 +41,6 @@ mxCellRenderer.prototype.getControlBounds = function (state, w, h) {
         }
 
         if (state.style.startSize) {
-            debugger
             return (state.view.graph.getModel().isEdge(state.cell)) ?
                 new mxRectangle(Math.round(cx), Math.round(state.y - (h - state.style.startSize) / 2 * s), Math.round(w * s), Math.round(h * s))
                 : new mxRectangle(Math.round(cx), Math.round(state.y - (h - state.style.startSize) / 2 * s), Math.round(w * s), Math.round(h * s));

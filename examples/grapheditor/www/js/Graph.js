@@ -3407,7 +3407,7 @@ Graph.prototype.getCellStyle = function(cell)
 			}
 		}
 	}
-	
+
 	return style;
 };
 
@@ -3431,9 +3431,19 @@ Graph.prototype.updateAlternateBounds = function(cell, geo, willCollapse)
 				geo.alternateBounds.width = 0;
 			}
 		}
+
+
 	}
 	
 	mxGraph.prototype.updateAlternateBounds.apply(this, arguments);
+
+	if(willCollapse){
+		this.setCellStyles(mxConstants.STYLE_FILLCOLOR, "#FF0000", [cell]);
+	}
+	else {
+		this.setCellStyles(mxConstants.STYLE_FILLCOLOR, "#00FF00", [cell]);
+	}
+
 };
 
 /**

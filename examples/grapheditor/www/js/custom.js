@@ -1,3 +1,9 @@
+
+mxGraph.prototype.applyCustomSetting = function (){
+    this.collapsedImage = new mxImage('./icons/arrow-right.svg', 24, 24);
+    this.expandedImage = new mxImage('./icons/arrow-left.svg', 24, 24);
+}
+
 mxCellRenderer.prototype.getControlBounds = function (state, w, h) {
     if (state.control != null) {
         var s = state.view.scale;

@@ -13,6 +13,8 @@ EditorUi = function(editor, container, lightbox)
 	this.container = container || document.body;
 	
 	var graph = this.editor.graph;
+	graph.applyCustomSetting();
+
 	graph.lightbox = lightbox;
 	this.initialDefaultVertexStyle = mxUtils.clone(graph.defaultVertexStyle);
 	this.initialDefaultEdgeStyle = mxUtils.clone(graph.defaultEdgeStyle);

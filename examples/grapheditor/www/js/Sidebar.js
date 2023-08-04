@@ -4062,7 +4062,7 @@ Sidebar.prototype.createVertexTemplateFromData = function(data, width, height, t
 Sidebar.prototype.createVertexTemplateFromCells = function(cells, width, height, title, showLabel, showTitle, allowCellsInserted)
 {
 	// Use this line to convert calls to this function with lots of boilerplate code for creating cells
-	console.trace('xml', Graph.compress(mxUtils.getXml(this.graph.encodeCells(cells))), cells);
+	// console.trace('xml', Graph.compress(mxUtils.getXml(this.graph.encodeCells(cells))), cells);
 	return this.createItem(cells, title, showLabel, showTitle, width, height, allowCellsInserted);
 };
 

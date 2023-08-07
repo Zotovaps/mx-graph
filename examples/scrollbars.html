@@ -358,25 +358,11 @@
 					{
 						if (this.isCellCollapsed(cell))
 						{
-							return '<table style="overflow:hidden;" width="100%" height="100%" border="1" cellpadding="4" class="title" style="height:100%;">' +
-								'<tr><th>Customers</th></tr>' +
-								'</table>';
+							return cell.collapsedValue;
 						}
 						else
 						{
-							return '<table style="overflow:hidden;" width="100%" border="1" cellpadding="4" class="title">' +
-								'<tr><th colspan="2">Customers</th></tr>' +
-								'</table>'+
-								'<div style="overflow:auto;cursor:default;top:26px;bottom:0px;position:absolute;width:100%;">'+
-								'<table width="100%" height="100%" border="1" cellpadding="4" class="erd">' +
-								'<tr><td>' +
-								'123' +
-								'</td><td>' +
-								'<u>customerId</u></td></tr><tr><td></td><td>number</td></tr>' +
-								'<tr><td></td><td>firstName</td></tr><tr><td></td><td>lastName</td></tr>' +
-								'<tr><td></td><td>streetAddress</td></tr><tr><td></td><td>city</td></tr>' +
-								'<tr><td></td><td>state</td></tr><tr><td></td><td>zip</td></tr>' +
-								'</table></div>';
+							return cell.value;
 						}
 					}
 					else
@@ -412,9 +398,13 @@
 				{
 					var v1 = graph.insertVertex(parent, null, '', 20, 20, width, height);
 					v1.geometry.alternateBounds = new mxRectangle(0, 0, width, 26);
+					v1.value = `<table style="overflow:hidden;" width="100%" border="1" cellpadding="4" class="title"><tr><th colspan="2">Test</th></tr></table><div style="overflow:auto;cursor:default;top:26px;bottom:0px;position:absolute;width:100%;"><table width="100%" height="100%" border="1" cellpadding="4" class="erd"><tbody><tr><td>aaa</td><td>bbb</td><td>ccc</td></tr><tr><td>aaa</td><td>bbb</td><td>ccc</td></tr><tr><td>aaa</td><td>bbb</td><td>ccc</td></tr><tr><td>aaa</td><td>bbb</td><td>ccc</td></tr><tr><td>aaa</td><td>bbb</td><td>ccc</td></tr><tr><td>aaa</td><td>bbb</td><td>ccc</td></tr><tr><td>aaa</td><td>bbb</td><td>ccc</td></tr><tr><td>aaa</td><td>bbb</td><td>ccc</td></tr></tbody></table></div>`
+					v1.collapsedValue = `<table style="overflow:hidden;" width="100%" height="100%" border="1" cellpadding="4" class="title"><tbody><tr><th>Test</th></tr></tbody></table>`
 
 					var v2 = graph.insertVertex(parent, null, '', 400, 150, width, height);
 					v2.geometry.alternateBounds = new mxRectangle(0, 0, width, 26);
+                    v2.value = `<table style="overflow:hidden;" width="100%" border="1" cellpadding="4" class="title"><tr><th colspan="2">Customers</th></tr></table><div style="overflow:auto;cursor:default;top:26px;bottom:0px;position:absolute;width:100%;"><table width="100%" height="100%" border="1" cellpadding="4" class="erd"><tr><td>123</td><td><u>customerId</u></td></tr><tr><td></td><td>number</td></tr><tr><td></td><td>firstName</td></tr><tr><td></td><td>lastName</td></tr><tr><td></td><td>streetAddress</td></tr><tr><td></td><td>city</td></tr><tr><td></td><td>state</td></tr><tr><td></td><td>zip</td></tr></table></div>`
+					v2.collapsedValue = `<table style="overflow:hidden;" width="100%" height="100%" border="1" cellpadding="4" class="title"><tbody><tr><th>Customers</th></tr></tbody></table>`
 
 					graph.insertEdge(parent, null, relation, v1, v2);
 				}

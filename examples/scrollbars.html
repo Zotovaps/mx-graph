@@ -476,6 +476,8 @@
                     container.appendChild(tableHeader)
                     container.appendChild(div)
 
+                    document.getElementById("test").innerHTML = container.innerHTML
+
                     return container.innerHTML
                 }
 
@@ -686,6 +688,8 @@
 <div id="graphContainer"
      style="cursor:default;position:absolute;top:30px;left:0px;bottom:0px;right:0px;background:url('editors/images/grid.gif')">
 </div>
+
+<div id="test" style="top: 350px;position: relative;width: 200px;height: 300px;"/>
 
 <button style="top: 500px" id="log_button">
     Log JSON

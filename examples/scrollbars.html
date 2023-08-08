@@ -101,11 +101,11 @@
                 // Overrides target perimeter point for connection previews
                 mxConnectionHandler.prototype.getTargetPerimeterPoint = function (state, me) {
                     // Determines the y-coordinate of the target perimeter point
-                    // by using the currentRowNode assigned in updateRow
+                    // by using the currentTdNode assigned in updateRow
                     var y = me.getY();
 
-                    if (this.currentRowNode != null) {
-                        y = getRowY(state, this.currentRowNode);
+                    if (this.currentTdNode != null) {
+                        y = getRowY(state, this.currentTdNode);
                     }
 
                     // Checks on which side of the terminal to leave
@@ -138,7 +138,7 @@
 
                 // Disables connections to invalid rows
                 mxConnectionHandler.prototype.isValidTarget = function (cell) {
-                    return this.currentRowNode != null;
+                    return this.currentTdNode != null;
                 };
 
                 // Creates the graph inside the given container
@@ -233,26 +233,16 @@
 
                 // Adds a new function to update the currentRow based on the given event
                 // and return the DOM node for that row
-                graph.connectionHandler.updateRow = function (target) {
-                    while (target != null && target.nodeName != 'TR') {
+                graph.connectionHandler.updateTd = function (target) {
+                    while (target != null && target.nodeName != 'TD') {
                         target = target.parentNode;
                     }
 
-                    this.currentRow = null;
+                    this.currentTd = null;
 
                     // Checks if we're dealing with a row in the correct table
-                    if (target != null && target.parentNode.parentNode.className == 'erd') {
-                        // Stores the current row number in a property so that it can
-                        // be retrieved to create the preview and final edge
-                        var rowNumber = 0;
-                        var current = target.parentNode.firstChild;
-
-                        while (target != current && current != null) {
-                            current = current.nextSibling;
-                            rowNumber++;
-                        }
-
-                        this.currentRow = rowNumber + 1;
+                    if (this.getParentDiv(target)) {
+                        this.currentTd = target.getAttribute("box_id");
                     } else {
                         target = null;
                     }
@@ -260,13 +250,21 @@
                     return target;
                 };
 
+                graph.connectionHandler.getParentDiv = function (target) {
+                    while (target != null && target.nodeName != 'DIV') {
+                        target = target.parentNode;
+                    }
+                   return target
+                }
+
                 // Adds placement of the connect icon based on the mouse event target (row)
                 graph.connectionHandler.updateIcons = function (state, icons, me) {
                     var target = me.getSource();
-                    target = this.updateRow(target);
+                    target = this.updateTd(target);
+                    if (target != null && this.currentTd != null) {
+                        var div = this.getParentDiv(target)
 
-                    if (target != null && this.currentRow != null) {
-                        var div = target.parentNode.parentNode.parentNode;
+                        // var div = target.parentNode.parentNode.parentNode;
                         var s = state.view.scale;
 
                         icons[0].node.style.visibility = 'visible';
@@ -276,7 +274,7 @@
                             target.offsetHeight / 2 - div.scrollTop + div.offsetTop) * s;
                         icons[0].redraw();
 
-                        this.currentRowNode = target;
+                        this.currentTdNode = target;
                     } else {
                         icons[0].node.style.visibility = 'hidden';
                     }
@@ -286,10 +284,10 @@
                 var oldMouseMove = graph.connectionHandler.mouseMove;
                 graph.connectionHandler.mouseMove = function (sender, me) {
                     if (this.edgeState != null) {
-                        this.currentRowNode = this.updateRow(me.getSource());
+                        this.currentTdNode = this.updateTd(me.getSource());
 
-                        if (this.currentRow != null) {
-                            this.edgeState.cell.value.setAttribute('targetRow', this.currentRow);
+                        if (this.currentTd != null) {
+                            this.edgeState.cell.value.setAttribute('targetRow', this.currentTd);
                         } else {
                             this.edgeState.cell.value.setAttribute('targetRow', '0');
                         }
@@ -304,7 +302,7 @@
                 // Creates the edge state that may be used for preview
                 graph.connectionHandler.createEdgeState = function (me) {
                     var relation = doc.createElement('Relation');
-                    relation.setAttribute('sourceRow', this.currentRow || '0');
+                    relation.setAttribute('sourceRow', this.currentTd || '0');
                     relation.setAttribute('targetRow', '0');
 
                     var edge = this.createEdge(relation);
@@ -436,7 +434,7 @@
                     var v2 = graph.insertVertex(parent, null, '', 400, 150, width, height);
                     v2.caption = "Customers"
                     v2.geometry.alternateBounds = new mxRectangle(0, 0, width, 26);
-                    v2.value = `<table style="overflow:hidden;" width="100%" border="1" cellpadding="4" class="title"><tr><th colspan="2">${v2.caption}</th></tr></table><div style="overflow:auto;cursor:default;top:26px;bottom:0px;position:absolute;width:100%;"><table width="100%" height="100%" border="1" cellpadding="4" class="erd"><tr><td>123</td><td><u>customerId</u></td></tr><tr><td></td><td>number</td></tr><tr><td></td><td>firstName</td></tr><tr><td></td><td>lastName</td></tr><tr><td></td><td>streetAddress</td></tr><tr><td></td><td>city</td></tr><tr><td></td><td>state</td></tr><tr><td></td><td>zip</td></tr></table></div>`
+                    v2.value = `<table style="overflow:hidden;" width="100%" border="1" cellpadding="4" class="title"><tr><th colspan="2">${v2.caption}</th></tr></table><div style="overflow:auto;cursor:default;top:26px;bottom:0px;position:absolute;width:100%;"><table width="100%" height="100%" border="1" cellpadding="4" class="erd"><tr><td box_id="box1">123</td><td box_id="box2"><u>customerId</u></td></tr><tr><td box_id="box3"></td><td box_id="box4">number</td></tr><tr><td box_id="box5"></td><td box_id="box6">firstName</td></tr><tr><td box_id="box7"></td><td box_id="box8">lastName</td></tr><tr><td box_id="box9"></td><td box_id="box10">streetAddress</td></tr><tr><td box_id="box11"></td><td box_id="box12">city</td></tr><tr><td box_id="box13"></td><td box_id="box14">state</td></tr><tr><td box_id="box15"></td><td box_id="box16">zip</td></tr></table></div>`
                     v2.collapsedValue = createCollapsedTableHTML(v2)
 
                     graph.insertEdge(parent, null, relation, v1, v2);
@@ -464,7 +462,7 @@
                         const tr = document.createElement("tr")
                         row.columns.forEach(column => {
                             const td = document.createElement("td")
-                            td.setAttribute("box_id", column.box_id)
+                            td.setAttribute("box_id", column.item.box_id)
                             td.innerText = column.item.caption
                             tr.appendChild(td)
                         })
@@ -487,7 +485,6 @@
                     table.setAttribute("border", "1")
                     table.setAttribute("cellpadding", "4")
                     table.setAttribute("class", "title")
-                    // debugger
                     const tbody = document.createElement("tbody")
                     const tr = document.createElement("tr")
                     const th = document.createElement("th")

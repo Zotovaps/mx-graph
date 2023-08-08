@@ -102,6 +102,7 @@
                 mxConnectionHandler.prototype.getTargetPerimeterPoint = function (state, me) {
                     // Determines the y-coordinate of the target perimeter point
                     // by using the currentTdNode assigned in updateRow
+                    debugger
                     var y = me.getY();
 
                     if (this.currentTdNode != null) {
@@ -120,10 +121,11 @@
 
                 // Overrides source perimeter point for connection previews
                 mxConnectionHandler.prototype.getSourcePerimeterPoint = function (state, next, me) {
+                    debugger
                     var y = me.getY();
 
-                    if (this.sourceRowNode != null) {
-                        y = getRowY(state, this.sourceRowNode);
+                    if (this.sourceTdNode != null) {
+                        y = getRowY(state, this.sourceTdNode);
                     }
 
                     // Checks on which side of the terminal to leave
@@ -241,7 +243,7 @@
                     this.currentTd = null;
 
                     // Checks if we're dealing with a row in the correct table
-                    if (this.getParentDiv(target)) {
+                    if (getParentDiv(target)) {
                         this.currentTd = target.getAttribute("box_id");
                     } else {
                         target = null;
@@ -250,19 +252,12 @@
                     return target;
                 };
 
-                graph.connectionHandler.getParentDiv = function (target) {
-                    while (target != null && target.nodeName != 'DIV') {
-                        target = target.parentNode;
-                    }
-                   return target
-                }
-
                 // Adds placement of the connect icon based on the mouse event target (row)
                 graph.connectionHandler.updateIcons = function (state, icons, me) {
                     var target = me.getSource();
                     target = this.updateTd(target);
                     if (target != null && this.currentTd != null) {
-                        var div = this.getParentDiv(target)
+                        var div = getParentDiv(target)
 
                         // var div = target.parentNode.parentNode.parentNode;
                         var s = state.view.scale;
@@ -285,11 +280,10 @@
                 graph.connectionHandler.mouseMove = function (sender, me) {
                     if (this.edgeState != null) {
                         this.currentTdNode = this.updateTd(me.getSource());
-
                         if (this.currentTd != null) {
-                            this.edgeState.cell.value.setAttribute('targetRow', this.currentTd);
+                            this.edgeState.cell.value.setAttribute('targetTd', this.currentTd);
                         } else {
-                            this.edgeState.cell.value.setAttribute('targetRow', '0');
+                            this.edgeState.cell.value.setAttribute('targetTd', '0');
                         }
 
                         // Destroys icon to prevent event redirection via image in IE
@@ -302,15 +296,15 @@
                 // Creates the edge state that may be used for preview
                 graph.connectionHandler.createEdgeState = function (me) {
                     var relation = doc.createElement('Relation');
-                    relation.setAttribute('sourceRow', this.currentTd || '0');
-                    relation.setAttribute('targetRow', '0');
+                    relation.setAttribute('sourceTd', this.currentTd || '0');
+                    relation.setAttribute('targetTd', '0');
 
                     var edge = this.createEdge(relation);
                     var style = this.graph.getCellStyle(edge);
                     var state = new mxCellState(this.graph.view, edge, style);
 
                     // Stores the source row in the handler
-                    this.sourceRowNode = this.currentRowNode;
+                    this.sourceTdNode = this.currentTdNode;
 
                     return state;
                 };
@@ -334,9 +328,9 @@
 
                 // Same should be used to create the XML node for the table
                 // description and the rows (most probably as child nodes)
-                var relation = doc.createElement('Relation');
-                relation.setAttribute('sourceRow', '2');
-                relation.setAttribute('targetRow', '6');
+                // var relation = doc.createElement('Relation');
+                // relation.setAttribute('sourceRow', '2');
+                // relation.setAttribute('targetRow', '6');
 
                 // Enables rubberband selection
                 new mxRubberband(graph);
@@ -437,7 +431,7 @@
                     v2.value = `<table style="overflow:hidden;" width="100%" border="1" cellpadding="4" class="title"><tr><th colspan="2">${v2.caption}</th></tr></table><div style="overflow:auto;cursor:default;top:26px;bottom:0px;position:absolute;width:100%;"><table width="100%" height="100%" border="1" cellpadding="4" class="erd"><tr><td box_id="box1">123</td><td box_id="box2"><u>customerId</u></td></tr><tr><td box_id="box3"></td><td box_id="box4">number</td></tr><tr><td box_id="box5"></td><td box_id="box6">firstName</td></tr><tr><td box_id="box7"></td><td box_id="box8">lastName</td></tr><tr><td box_id="box9"></td><td box_id="box10">streetAddress</td></tr><tr><td box_id="box11"></td><td box_id="box12">city</td></tr><tr><td box_id="box13"></td><td box_id="box14">state</td></tr><tr><td box_id="box15"></td><td box_id="box16">zip</td></tr></table></div>`
                     v2.collapsedValue = createCollapsedTableHTML(v2)
 
-                    graph.insertEdge(parent, null, relation, v1, v2);
+                    // graph.insertEdge(parent, null, relation, v1, v2);
                 } finally {
                     // Updates the display
                     graph.getModel().endUpdate();
@@ -570,6 +564,7 @@
 
         // Implements a special perimeter for table rows inside the table markup
         mxGraphView.prototype.updateFloatingTerminalPoint = function (edge, start, end, source) {
+            debugger
             var next = this.getNextPoint(edge, end, source);
             var div = start.text.node.getElementsByTagName('div')[2];
 
@@ -585,17 +580,16 @@
                 y = start.getCenterY() - div.scrollTop;
 
                 if (mxUtils.isNode(edge.cell.value) && !this.graph.isCellCollapsed(start.cell)) {
-                    var attr = (source) ? 'sourceRow' : 'targetRow';
-                    var row = parseInt(edge.cell.value.getAttribute(attr));
+                    var attr = (source) ? 'sourceTd' : 'targetTd';
+                    debugger
+                    var box_id = edge.cell.value.getAttribute(attr);
 
                     // HTML labels contain an outer table which is built-in
-                    var table = div.getElementsByTagName('table')[0];
-                    var trs = table.getElementsByTagName('tr');
-                    var tr = trs[Math.min(trs.length - 1, row - 1)];
+                    var td = div.querySelectorAll(`[box_id="${box_id}"]`)[0]
 
                     // Gets vertical center of source or target row
-                    if (tr != null) {
-                        y = getRowY(start, tr);
+                    if (td != null) {
+                        y = getRowY(start, td);
                     }
                 }
 
@@ -620,11 +614,11 @@
                 var tmp = [];
 
                 // Filters the edges with the same source row
-                var row = edge.cell.value.getAttribute('targetRow');
+                var row = edge.cell.value.getAttribute('targetTd');
 
                 for (var i = 0; i < edges.length; i++) {
                     if (mxUtils.isNode(edges[i].value) &&
-                        edges[i].value.getAttribute('targetRow') == row) {
+                        edges[i].value.getAttribute('targetTd') == row) {
                         tmp.push(edges[i]);
                     }
                 }
@@ -662,15 +656,23 @@
         };
 
         // Defines global helper function to get y-coordinate for a given cell state and row
-        var getRowY = function (state, tr) {
+        var getRowY = function (state, td) {
+            debugger
             var s = state.view.scale;
-            var div = tr.parentNode.parentNode.parentNode;
+            var div = getParentDiv(td);
             var offsetTop = parseInt(div.style.top);
-            var y = state.y + (tr.offsetTop + tr.offsetHeight / 2 - div.scrollTop + offsetTop) * s;
+            var y = state.y + (td.offsetTop + td.offsetHeight / 2 - div.scrollTop + offsetTop) * s;
             y = Math.min(state.y + state.height, Math.max(state.y + offsetTop * s, y));
 
             return y;
         };
+
+        var getParentDiv = function (target) {
+            while (target != null && target.nodeName != 'DIV') {
+                target = target.parentNode;
+            }
+            return target
+        }
 
 
     </script>

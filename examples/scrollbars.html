@@ -502,6 +502,8 @@
                 }));
 
                 document.getElementById("log_button").onclick = () => {
+                    debugger
+                    const dict = new Object()
                     const json = new Object()
                     json.boxes = []
                     const arrayCells = graph.getChildVertices(graph.defaultParent)
@@ -532,6 +534,9 @@
                                     column.item = new Object()
                                     column.item.caption = td.innerText
                                     column.item.box_id = td.getAttribute("box_id")
+
+                                    dict[column.item.box_id] = column.item
+
                                     row.columns.push(column)
                                 }
 
@@ -540,16 +545,75 @@
                         }
 
                         for (const edge of cell.edges.filter(e => e.source === cell)) {
-                            const sourceRow = Number(edge.value.getAttribute("sourceRow")) - 1
-                            const targetRow = Number(edge.value.getAttribute("targetRow")) - 1
-                            if (!box.body.rows[sourceRow].box_links) {
-                                box.body.rows[sourceRow].box_links = []
+                            const sourceId = edge.value.getAttribute("sourceTd")
+                            const targetId = edge.value.getAttribute("targetTd")
+
+
+                            if (dict[sourceId].box_links) {
+                                dict[sourceId].box_links.push({
+                                    link: {
+                                        typelink: 2,
+                                        box_id: `${edge.target.id}:${targetId}`
+                                    }
+                                })
+                            } else {
+                                dict[sourceId].box_links = [{
+                                    link: {
+                                        typelink: 2,
+                                        box_id: `${edge.target.id}:${targetId}`
+                                    }
+                                }]
                             }
-                            const newLink = new Object()
-                            newLink.link = new Object()
-                            newLink.link.typelink = 1
-                            newLink.link.box_id = `${edge.target.id}:${targetRow}`
-                            box.body.rows[sourceRow].box_links.push(newLink)
+                            // dict[targetId].box_links = [{link: {typelink: 2, box_id: `${edge.source.id}:${sourceId}`}}]
+
+                            debugger
+
+                            // const sourceRow = Number(edge.value.getAttribute("sourceRow")) - 1
+                            // const targetRow = Number(edge.value.getAttribute("targetRow")) - 1
+                            // if (!box.body.rows[sourceRow].box_links) {
+                            //     box.body.rows[sourceRow].box_links = []
+                            // }
+                            // const newLink = new Object()
+                            // newLink.link = new Object()
+                            // newLink.link.typelink = 1
+                            // newLink.link.box_id = `${edge.target.id}:${targetRow}`
+                            // box.body.rows[sourceRow].box_links.push(newLink)
+                        }
+
+                        for (const edge of cell.edges.filter(e => e.target === cell)) {
+                            const sourceId = edge.value.getAttribute("sourceTd")
+                            const targetId = edge.value.getAttribute("targetTd")
+
+
+                            if (dict[targetId].box_links) {
+                                dict[targetId].box_links.push({
+                                    link: {
+                                        typelink: 2,
+                                        box_id: `${edge.source.id}:${sourceId}`
+                                    }
+                                })
+                            } else {
+                                dict[targetId].box_links = [{
+                                    link: {
+                                        typelink: 2,
+                                        box_id: `${edge.source.id}:${sourceId}`
+                                    }
+                                }]
+                            }
+                            // dict[targetId].box_links = [{link: {typelink: 2, box_id: `${edge.source.id}:${sourceId}`}}]
+
+                            debugger
+
+                            // const sourceRow = Number(edge.value.getAttribute("sourceRow")) - 1
+                            // const targetRow = Number(edge.value.getAttribute("targetRow")) - 1
+                            // if (!box.body.rows[sourceRow].box_links) {
+                            //     box.body.rows[sourceRow].box_links = []
+                            // }
+                            // const newLink = new Object()
+                            // newLink.link = new Object()
+                            // newLink.link.typelink = 1
+                            // newLink.link.box_id = `${edge.target.id}:${targetRow}`
+                            // box.body.rows[sourceRow].box_links.push(newLink)
                         }
 
 
@@ -564,7 +628,6 @@
 
         // Implements a special perimeter for table rows inside the table markup
         mxGraphView.prototype.updateFloatingTerminalPoint = function (edge, start, end, source) {
-            debugger
             var next = this.getNextPoint(edge, end, source);
             var div = start.text.node.getElementsByTagName('div')[2];
 
@@ -581,7 +644,6 @@
 
                 if (mxUtils.isNode(edge.cell.value) && !this.graph.isCellCollapsed(start.cell)) {
                     var attr = (source) ? 'sourceTd' : 'targetTd';
-                    debugger
                     var box_id = edge.cell.value.getAttribute(attr);
 
                     // HTML labels contain an outer table which is built-in
@@ -657,7 +719,6 @@
 
         // Defines global helper function to get y-coordinate for a given cell state and row
         var getRowY = function (state, td) {
-            debugger
             var s = state.view.scale;
             var div = getParentDiv(td);
             var offsetTop = parseInt(div.style.top);

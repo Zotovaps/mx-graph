@@ -98,45 +98,45 @@
                 // Disables the context menu
                 mxEvent.disableContextMenu(container);
 
-                // Overrides target perimeter point for connection previews
-                mxConnectionHandler.prototype.getTargetPerimeterPoint = function (state, me) {
-                    // Determines the y-coordinate of the target perimeter point
-                    // by using the currentTdNode assigned in updateRow
-                    debugger
-                    var y = me.getY();
-
-                    if (this.currentTdNode != null) {
-                        y = getRowY(state, this.currentTdNode);
-                    }
-
-                    // Checks on which side of the terminal to leave
-                    var x = state.x;
-
-                    if (this.previous.getCenterX() > state.getCenterX()) {
-                        x += state.width;
-                    }
-
-                    return new mxPoint(x, y);
-                };
-
-                // Overrides source perimeter point for connection previews
-                mxConnectionHandler.prototype.getSourcePerimeterPoint = function (state, next, me) {
-                    debugger
-                    var y = me.getY();
-
-                    if (this.sourceTdNode != null) {
-                        y = getRowY(state, this.sourceTdNode);
-                    }
-
-                    // Checks on which side of the terminal to leave
-                    var x = state.x;
-
-                    if (next.x > state.getCenterX()) {
-                        x += state.width;
-                    }
-
-                    return new mxPoint(x, y);
-                };
+                // // Overrides target perimeter point for connection previews
+                // mxConnectionHandler.prototype.getTargetPerimeterPoint = function (state, me) {
+                //     // Determines the y-coordinate of the target perimeter point
+                //     // by using the currentTdNode assigned in updateRow
+                //     debugger
+                //     var y = me.getY();
+                //
+                //     if (this.currentTdNode != null) {
+                //         y = getRowY(state, this.currentTdNode);
+                //     }
+                //
+                //     // Checks on which side of the terminal to leave
+                //     var x = state.x;
+                //
+                //     if (this.previous.getCenterX() > state.getCenterX()) {
+                //         x += state.width;
+                //     }
+                //
+                //     return new mxPoint(x, y);
+                // };
+                //
+                // // Overrides source perimeter point for connection previews
+                // mxConnectionHandler.prototype.getSourcePerimeterPoint = function (state, next, me) {
+                //     debugger
+                //     var y = me.getY();
+                //
+                //     if (this.sourceTdNode != null) {
+                //         y = getRowY(state, this.sourceTdNode);
+                //     }
+                //
+                //     // Checks on which side of the terminal to leave
+                //     var x = state.x;
+                //
+                //     if (next.x > state.getCenterX()) {
+                //         x += state.width;
+                //     }
+                //
+                //     return new mxPoint(x, y);
+                // };
 
                 // Disables connections to invalid rows
                 mxConnectionHandler.prototype.isValidTarget = function (cell) {
@@ -502,7 +502,6 @@
                 }));
 
                 document.getElementById("log_button").onclick = () => {
-                    debugger
                     const dict = new Object()
                     const json = new Object()
                     json.boxes = []
@@ -634,10 +633,7 @@
             var x = start.x;
             var y = start.getCenterY();
 
-            // Checks on which side of the terminal to leave
-            if (next.x > x + start.width / 2) {
-                x += start.width;
-            }
+
 
             if (div != null) {
                 y = start.getCenterY() - div.scrollTop;
@@ -651,9 +647,15 @@
 
                     // Gets vertical center of source or target row
                     if (td != null) {
-                        y = getRowY(start, td);
+                        y = getTdY(start, td);
+                        x = getTdX(start, td);
                     }
                 }
+
+                // Checks on which side of the terminal to leave
+                // if (next.x > x + start.width / 2) {
+                //     x += start.width;
+                // }
 
                 // Keeps vertical coordinate inside start
                 var offsetTop = parseInt(div.style.top) * start.view.scale;
@@ -718,7 +720,7 @@
         };
 
         // Defines global helper function to get y-coordinate for a given cell state and row
-        var getRowY = function (state, td) {
+        var getTdY = function (state, td) {
             var s = state.view.scale;
             var div = getParentDiv(td);
             var offsetTop = parseInt(div.style.top);
@@ -726,6 +728,15 @@
             y = Math.min(state.y + state.height, Math.max(state.y + offsetTop * s, y));
 
             return y;
+        };
+
+        var getTdX = function (state, td) {
+            var s = state.view.scale;
+            var div = getParentDiv(td);
+            var x = state.x + (td.offsetLeft + td.offsetWidth / 2) * s;
+            x = Math.min(state.x + state.width, Math.max(state.x, x));
+
+            return x;
         };
 
         var getParentDiv = function (target) {

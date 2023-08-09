@@ -148,8 +148,7 @@
 
                 // Uses the entity perimeter (below) as default
                 graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_PERIMETER] =
-                    mxPerimeter.EntityPerimeter;
+                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_PERIMETER] = mxPerimeter.EntityPerimeter;
                 graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_SHADOW] = true;
                 graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_FILLCOLOR] = '#DDEAFF';
                 graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_GRADIENTCOLOR] = '#A9C4EB';
@@ -160,8 +159,7 @@
                 graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_OVERFLOW] = 'fill';
 
                 // Uses the entity edge style as default
-                graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_EDGE] =
-                    mxEdgeStyle.EntityRelation;
+                graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_EDGE] = mxEdgeStyle.EntityRelation;
                 graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_STROKECOLOR] = 'black';
                 graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_FONTCOLOR] = 'black';
 
@@ -632,7 +630,6 @@
 
             var x = start.x;
             var y = start.getCenterY();
-
 
 
             if (div != null) {

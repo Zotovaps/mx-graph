@@ -256,26 +256,16 @@
                     target = this.updateTd(target);
                     if (target != null && this.currentTd != null) {
                         var div = getParentDiv(target)
-
-
-                        let x = 0;
-                        let y = 0;
-                        let targetTmp = target;
-
-                        while (targetTmp !== div) {
-                            x += targetTmp.offsetLeft;
-                            y += targetTmp.offsetTop;
-
-                            targetTmp = targetTmp.offsetParent;
-                        }
-
-
+                        var offsetValues = getOffsetValues(target, div)
                         var s = state.view.scale;
 
                         icons[0].node.style.visibility = 'visible';
-                        icons[0].bounds.x = state.x + x + Math.min(state.width, target.offsetWidth * s) - this.icons[0].bounds.width - 2;
-                        icons[0].bounds.y = state.y - this.icons[0].bounds.height / 2 + (y +
-                            target.offsetHeight / 2 - div.scrollTop + div.offsetTop) * s;
+                        icons[0].bounds.x = state.x + offsetValues.x * s + Math.min(state.width, target.offsetWidth * s) - this.icons[0].bounds.width - 2;
+                        icons[0].bounds.y = state.y - this.icons[0].bounds.height / 2 + (offsetValues.y + target.offsetHeight / 2 - div.scrollTop + div.offsetTop) * s;
+
+                        icons[0].bounds.width = 16 * s;
+                        icons[0].bounds.height = 16 * s;
+
                         icons[0].redraw();
 
                         this.currentTdNode = target;
@@ -820,7 +810,7 @@
         };
 
         // Defines global helper function to get y-coordinate for a given cell state and row
-        var getTdY = function (state, td) {
+        const getTdY = function (state, td) {
             var s = state.view.scale;
             var div = getParentDiv(td);
             var offsetTop = parseInt(div.style.top);
@@ -830,7 +820,7 @@
             return y;
         };
 
-        var getTdX = function (state, td) {
+        const getTdX = function (state, td) {
             var s = state.view.scale;
             var div = getParentDiv(td);
             var x = state.x + (td.offsetLeft + td.offsetWidth / 2) * s;
@@ -839,14 +829,27 @@
             return x;
         };
 
-        var getParentDiv = function (target) {
+        const getParentDiv = function (target) {
             while (target != null && target.nodeName != 'DIV') {
                 target = target.parentNode;
             }
             return target
         }
 
+        const getOffsetValues = function (elem, parent) {
+            let x = 0;
+            let y = 0;
+            let elemTmp = elem;
 
+            while (elemTmp !== parent) {
+                x += elemTmp.offsetLeft;
+                y += elemTmp.offsetTop;
+
+                elemTmp = elemTmp.offsetParent;
+            }
+
+            return {x: x, y: y}
+        }
     </script>
 </head>
 

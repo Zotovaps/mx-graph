@@ -257,13 +257,24 @@
                     if (target != null && this.currentTd != null) {
                         var div = getParentDiv(target)
 
-                        // var div = target.parentNode.parentNode.parentNode;
+
+                        let x = 0;
+                        let y = 0;
+                        let targetTmp = target;
+
+                        while (targetTmp !== div) {
+                            x += targetTmp.offsetLeft;
+                            y += targetTmp.offsetTop;
+
+                            targetTmp = targetTmp.offsetParent;
+                        }
+
+
                         var s = state.view.scale;
 
                         icons[0].node.style.visibility = 'visible';
-                        icons[0].bounds.x = state.x + target.offsetLeft + Math.min(state.width,
-                            target.offsetWidth * s) - this.icons[0].bounds.width - 2;
-                        icons[0].bounds.y = state.y - this.icons[0].bounds.height / 2 + (target.offsetTop +
+                        icons[0].bounds.x = state.x + x + Math.min(state.width, target.offsetWidth * s) - this.icons[0].bounds.width - 2;
+                        icons[0].bounds.y = state.y - this.icons[0].bounds.height / 2 + (y +
                             target.offsetHeight / 2 - div.scrollTop + div.offsetTop) * s;
                         icons[0].redraw();
 
@@ -411,10 +422,41 @@
                                         }
                                     },
                                     {
-                                        "item": {
-                                            "box_id": "item6",
-                                            "caption": "fff"
-                                        }
+                                        "rows": [
+                                            {
+                                                "columns": [
+                                                    {
+                                                        "item": {
+                                                            "box_id": "itemqw",
+                                                            "caption": "222"
+                                                        }
+                                                    }
+                                                ]
+
+                                            },
+                                            {
+                                                "columns": [
+                                                    {
+                                                        "item": {
+                                                            "box_id": "itemer",
+                                                            "caption": "333"
+                                                        }
+                                                    }
+                                                ]
+
+                                            },
+                                            {
+                                                "columns": [
+                                                    {
+                                                        "item": {
+                                                            "box_id": "itemty",
+                                                            "caption": "444"
+                                                        }
+                                                    }
+                                                ]
+
+                                            },
+                                        ]
                                     }
                                 ]
                             },

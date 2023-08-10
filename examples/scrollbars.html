@@ -9,6 +9,22 @@
     <title>Scrollbars example for mxGraph</title>
 
     <style type="text/css" media="screen">
+        ::-webkit-scrollbar {
+            width: 4px; /* width of the entire scrollbar */
+            height: 10px; /* width of the entire scrollbar */
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #E8EAF1;; /* color of the tracking area */
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #B7BDD0; /* color of the scroll thumb */
+            border-radius: 20px; /* roundness of the scroll thumb */
+            /*border: 3px solid orange; !* creates padding around scroll thumb *!*/
+        }
+
+
         table.title {
             border-color: black;
             border-collapse: collapse;
@@ -34,12 +50,17 @@
             overflow: auto;
             cursor: move;
             white-space: nowrap;
+
+            border: none !important;
         }
 
         table.erd td {
             border-color: black;
             text-align: left;
             color: black;
+
+            padding: 4px;
+
         }
 
         button {
@@ -241,7 +262,7 @@
                     this.currentTd = null;
 
                     // Checks if we're dealing with a row in the correct table
-                    if (getParentDiv(target)) {
+                    if (getParentDiv(target) && target.getAttribute("box_id") !== 'undefined') {
                         this.currentTd = target.getAttribute("box_id");
                     } else {
                         target = null;
@@ -407,7 +428,6 @@
                                     },
                                     {
                                         "item": {
-                                            "box_id": "item5",
                                             "caption": "eee"
                                         }
                                     },
@@ -501,8 +521,6 @@
                     const tableBody = document.createElement("table")
                     tableBody.setAttribute("width", "100%")
                     tableBody.setAttribute("height", "100%")
-                    tableBody.setAttribute("border", "1")
-                    tableBody.setAttribute("cellpadding", "4")
                     tableBody.setAttribute("class", "erd")
 
                     const tbody = document.createElement("tbody")

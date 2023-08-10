@@ -358,16 +358,41 @@
                                         }
                                     },
                                     {
-                                        "item": {
-                                            "box_id": "item2",
-                                            "caption": "bbb"
-                                        }
-                                    },
-                                    {
-                                        "item": {
-                                            "box_id": "item3",
-                                            "caption": "ccc"
-                                        }
+                                        "rows": [
+                                            {
+                                                "columns": [
+                                                    {
+                                                        "item": {
+                                                            "box_id": "item2",
+                                                            "caption": "222"
+                                                        }
+                                                    }
+                                                ]
+
+                                            },
+                                            {
+                                                "columns": [
+                                                    {
+                                                        "item": {
+                                                            "box_id": "item3",
+                                                            "caption": "333"
+                                                        }
+                                                    }
+                                                ]
+
+                                            },
+                                            {
+                                                "columns": [
+                                                    {
+                                                        "item": {
+                                                            "box_id": "item3",
+                                                            "caption": "444"
+                                                        }
+                                                    }
+                                                ]
+
+                                            },
+                                        ]
                                     }
                                 ]
                             },
@@ -453,10 +478,42 @@
                     cell.body.rows.forEach(row => {
                         const tr = document.createElement("tr")
                         row.columns.forEach(column => {
-                            const td = document.createElement("td")
-                            td.setAttribute("box_id", column.item.box_id)
-                            td.innerText = column.item.caption
-                            tr.appendChild(td)
+
+                            if (column.rows) {
+                                const td2 = document.createElement("td")
+                                const tableBody2 = document.createElement("table")
+                                tableBody2.setAttribute("width", "100%")
+                                tableBody2.setAttribute("height", "100%")
+                                tableBody2.setAttribute("border", "1")
+                                tableBody2.setAttribute("cellpadding", "4")
+                                tableBody2.setAttribute("class", "erd")
+
+                                const tbody2 = document.createElement("tbody")
+
+                                column.rows.forEach(r => {
+                                    const tr2 = document.createElement("tr")
+
+                                    r.columns.forEach(c => {
+                                        const td2 = document.createElement("td")
+                                        td2.setAttribute("box_id", c.item.box_id)
+                                        td2.innerText = c.item.caption
+                                        tr2.appendChild(td2)
+                                    })
+
+                                    tbody2.appendChild(tr2)
+
+                                })
+                                tableBody2.appendChild(tbody2)
+                                td2.appendChild(tableBody2)
+                                tr.appendChild(td2)
+                            }
+                            else {
+                                const td = document.createElement("td")
+                                td.setAttribute("box_id", column.item.box_id)
+                                td.innerText = column.item.caption
+                                tr.appendChild(td)
+                            }
+
                         })
                         tbody.appendChild(tr)
                     })
@@ -520,19 +577,17 @@
                         tmpDiv.innerHTML = cell.value
 
                         box.header.caption = tmpDiv.querySelector("table.title> tbody > tr > th").innerText
+
+
                         if (tmpDiv.querySelector("table.erd> tbody").children.length > 0) {
                             box.body = new Object()
                             box.body.rows = []
                             for (const tr of tmpDiv.querySelector("table.erd> tbody").children) {
                                 const row = new Object()
                                 row.columns = []
-                                for (const td of tr.children) {
-                                    const column = new Object()
-                                    column.item = new Object()
-                                    column.item.caption = td.innerText
-                                    column.item.box_id = td.getAttribute("box_id")
 
-                                    dict[column.item.box_id] = column.item
+                                for (const td of tr.children) {
+                                    const column = recursiveRows(td, dict)
 
                                     row.columns.push(column)
                                 }
@@ -561,20 +616,6 @@
                                     }
                                 }]
                             }
-                            // dict[targetId].box_links = [{link: {typelink: 2, box_id: `${edge.source.id}:${sourceId}`}}]
-
-                            debugger
-
-                            // const sourceRow = Number(edge.value.getAttribute("sourceRow")) - 1
-                            // const targetRow = Number(edge.value.getAttribute("targetRow")) - 1
-                            // if (!box.body.rows[sourceRow].box_links) {
-                            //     box.body.rows[sourceRow].box_links = []
-                            // }
-                            // const newLink = new Object()
-                            // newLink.link = new Object()
-                            // newLink.link.typelink = 1
-                            // newLink.link.box_id = `${edge.target.id}:${targetRow}`
-                            // box.body.rows[sourceRow].box_links.push(newLink)
                         }
 
                         for (const edge of cell.edges.filter(e => e.target === cell)) {
@@ -597,28 +638,48 @@
                                     }
                                 }]
                             }
-                            // dict[targetId].box_links = [{link: {typelink: 2, box_id: `${edge.source.id}:${sourceId}`}}]
-
-                            debugger
-
-                            // const sourceRow = Number(edge.value.getAttribute("sourceRow")) - 1
-                            // const targetRow = Number(edge.value.getAttribute("targetRow")) - 1
-                            // if (!box.body.rows[sourceRow].box_links) {
-                            //     box.body.rows[sourceRow].box_links = []
-                            // }
-                            // const newLink = new Object()
-                            // newLink.link = new Object()
-                            // newLink.link.typelink = 1
-                            // newLink.link.box_id = `${edge.target.id}:${targetRow}`
-                            // box.body.rows[sourceRow].box_links.push(newLink)
                         }
-
 
                         json.boxes.push(box)
                     })
 
 
                     console.log(json)
+                }
+
+
+                function recursiveRows(data, dict, result = []) {
+
+                        if (data.children.length > 0 && data.children[0].tagName === 'TABLE') {
+                            if (data.children[0].querySelector("table.erd> tbody").children.length > 0) {
+                                const rows = []
+
+                                for (const tr of data.children[0].querySelector("table.erd> tbody").children) {
+                                    const row = new Object()
+                                    row.columns = []
+
+                                    for (const td of tr.children) {
+                                        const column = recursiveRows(td, dict)
+
+                                        row.columns.push(column)
+                                    }
+
+                                    rows.push(row)
+                                }
+
+                                return rows
+                            }
+                        }
+                        else {
+                            const column = new Object()
+                            column.item = new Object()
+                            column.item.caption = data.innerText
+                            column.item.box_id = data.getAttribute("box_id")
+
+                            dict[column.item.box_id] = column.item
+
+                            return column
+                        }
                 }
             }
         };

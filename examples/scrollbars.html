@@ -386,7 +386,7 @@
                                                 "columns": [
                                                     {
                                                         "item": {
-                                                            "box_id": "item3",
+                                                            "box_id": "itemopopo",
                                                             "caption": "444"
                                                         }
                                                     }
@@ -813,9 +813,11 @@
         const getTdY = function (state, td) {
             var s = state.view.scale;
             var div = getParentDiv(td);
-            var offsetTop = parseInt(div.style.top);
-            var y = state.y + (td.offsetTop + td.offsetHeight / 2 - div.scrollTop + offsetTop) * s;
-            y = Math.min(state.y + state.height, Math.max(state.y + offsetTop * s, y));
+
+            let offset = getOffsetValues(td, div)
+
+            var y = state.y + (offset.y + td.offsetHeight / 2 - div.scrollTop + div.offsetTop) * s;
+            y = Math.min(state.y + state.height, Math.max(state.y + div.offsetTop * s, y));
 
             return y;
         };
@@ -823,7 +825,11 @@
         const getTdX = function (state, td) {
             var s = state.view.scale;
             var div = getParentDiv(td);
-            var x = state.x + (td.offsetLeft + td.offsetWidth / 2) * s;
+
+            let offset = getOffsetValues(td, div)
+
+
+            var x = state.x + (offset.x + td.offsetWidth / 2) * s;
             x = Math.min(state.x + state.width, Math.max(state.x, x));
 
             return x;

@@ -16,6 +16,7 @@
 
         ::-webkit-scrollbar-track {
             background: #E8EAF1;; /* color of the tracking area */
+            margin: 0 0 10px 0;
         }
 
         ::-webkit-scrollbar-thumb {
@@ -24,25 +25,32 @@
             /*border: 3px solid orange; !* creates padding around scroll thumb *!*/
         }
 
+        /*table {*/
+        /*    border-collapse: collapse;*/
+        /*    */
+        /*}*/
 
-        table.title {
-            border-color: black;
-            border-collapse: collapse;
-            cursor: move;
-            height: 26px;
-            border-bottom-style: none;
-            color: black;
-        }
+        /*table.title {*/
+        /*    border-color: black;*/
+        /*    border-collapse: collapse;*/
+        /*    cursor: move;*/
+        /*    height: 26px;*/
+        /*    border-bottom-style: none;*/
+        /*    color: black;*/
+        /*}*/
 
-        table.title th {
-            font-size: 10pt;
-            font-family: Verdana;
-            white-space: nowrap;
-            background: lightgray;
-            font-weight: bold;
-        }
+        /*table.title th {*/
+        /*    font-size: 10pt;*/
+        /*    font-family: Verdana;*/
+        /*    white-space: nowrap;*/
+        /*    background: lightgray;*/
+        /*    font-weight: bold;*/
+        /*}*/
 
         table.erd {
+            width: 100%;
+            height: 100%;
+
             font-size: 10pt;
             font-family: Verdana;
             border-color: black;
@@ -66,6 +74,67 @@
         button {
             position: absolute;
         }
+
+        .typography-h2 {
+            /*font-family: Inter;*/
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: 19px;
+
+            color: #3F4864;
+        }
+
+        .collapsed-cell {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 5px;
+
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+            padding: 10px 10px 10px 20px;
+
+            /*border-radius: 30px;*/
+            background: transparent;
+            box-shadow: 1px 1px 2px 0px rgba(52, 65, 113, 0.10);
+        }
+
+        .collapsed-cell.typography-h2 {
+            color: #FFFFFF;
+        }
+
+        .cell-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+            padding: 10px 0;
+        }
+
+        .cell-header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 5px;
+
+            box-sizing: border-box;
+            width: 100%;
+            min-height: 44px;
+            padding: 10px 10px;
+
+            overflow: hidden;
+
+            flex: none;
+        }
+
+        .cell-header.typography-h2 {
+            color: #6680FF;
+        }
     </style>
 
     <!-- Sets the basepath for the library if not in same directory -->
@@ -75,6 +144,8 @@
 
     <!-- Loads and initializes the library -->
     <script type="text/javascript" src="../src/js/mxClient.js"></script>
+    <script type="text/javascript" src="./custom.js"></script>
+
 
     <!-- Example code -->
     <script type="text/javascript">
@@ -110,6 +181,7 @@
                 // Defines an icon for creating new connections in the connection handler.
                 // This will automatically disable the highlighting of the source vertex.
                 mxConnectionHandler.prototype.connectImage = new mxImage('images/connector.gif', 16, 16);
+
 
                 // Support for certain CSS styles in quirks mode
                 if (mxClient.IS_QUIRKS) {
@@ -167,22 +239,47 @@
                 // Creates the graph inside the given container
                 var graph = new mxGraph(container);
 
-                // Uses the entity perimeter (below) as default
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_PERIMETER] = mxPerimeter.EntityPerimeter;
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_SHADOW] = true;
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_FILLCOLOR] = '#DDEAFF';
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_GRADIENTCOLOR] = '#A9C4EB';
-                delete graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_STROKECOLOR];
+                graph.applyCustomSetting();
 
-                // Used for HTML labels that use up the complete vertex space (see
-                // graph.cellRenderer.redrawLabel below for syncing the size)
-                graph.stylesheet.getDefaultVertexStyle()[mxConstants.STYLE_OVERFLOW] = 'fill';
+                //Collapsed/expanded icon override
+                graph.collapsedImage = new mxImage('../icons/arrow-right.svg', 24, 24);
+                graph.expandedImage = new mxImage('../icons/arrow-left.svg', 24, 24);
 
-                // Uses the entity edge style as default
-                graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_EDGE] = mxEdgeStyle.EntityRelation;
-                graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_STROKECOLOR] = 'black';
-                graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_FONTCOLOR] = 'black';
+
+
+                // // Uses the entity edge style as default
+                // mxMarker.addMarker('circle', function (canvas, shape, type, pe, unitX, unitY, size, source, sw, filled) {
+                //     var a = size / 2;
+                //
+                //     var pt = pe.clone();
+                //     pe.x -= unitX * a;
+                //     pe.y -= unitY * a;
+                //
+                //     return function () {
+                //         canvas.state.fillColor = "#FFFFFF"
+                //         canvas.state.strokeWidth = 3
+                //
+                //         canvas.ellipse(pt.x - a, pt.y - a, size, size);
+                //
+                //         if (filled) {
+                //             canvas.fillAndStroke();
+                //         } else {
+                //             canvas.stroke();
+                //         }
+                //     };
+                // })
+                //
+                // graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_EDGE] = mxEdgeStyle.ElbowConnector;
+                // graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_CONNECTOR;
+                // graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_ROUNDED] = 1;
+                // graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_STROKECOLOR] = '#2D49D7';
+                // graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_FONTCOLOR] = '#446299';
+                // graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_STROKEWIDTH] = 2;
+                // graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_ENDSIZE] = 15;
+                // graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_STARTSIZE] = 15;
+                // graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_ENDARROW] = 'circle';
+                // graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_STARTARROW] = 'circle';
+
 
                 // Allows new connections to be made but do not allow existing
                 // connections to be changed for the sake of simplicity of this
@@ -495,18 +592,17 @@
                         ]
                     }
                     v1.id = "box_rows_columns_example";
-                    v1.geometry.alternateBounds = new mxRectangle(0, 0, width, 26);
+                    v1.geometry.alternateBounds = new mxRectangle(0, 0, width, 44);
                     v1.value = createTableHTML(v1)
                     v1.collapsedValue = createCollapsedTableHTML(v1)
 
 
                     var v2 = graph.insertVertex(parent, null, '', 400, 150, width, height);
                     v2.caption = "Customers"
-                    v2.geometry.alternateBounds = new mxRectangle(0, 0, width, 26);
+                    v2.geometry.alternateBounds = new mxRectangle(0, 0, width, 44);
                     v2.value = `<table style="overflow:hidden;" width="100%" border="1" cellpadding="4" class="title"><tr><th colspan="2">${v2.caption}</th></tr></table><div style="overflow:auto;cursor:default;top:26px;bottom:0px;position:absolute;width:100%;"><table width="100%" height="100%" border="1" cellpadding="4" class="erd"><tr><td box_id="box1">123</td><td box_id="box2"><u>customerId</u></td></tr><tr><td box_id="box3"></td><td box_id="box4">number</td></tr><tr><td box_id="box5"></td><td box_id="box6">firstName</td></tr><tr><td box_id="box7"></td><td box_id="box8">lastName</td></tr><tr><td box_id="box9"></td><td box_id="box10">streetAddress</td></tr><tr><td box_id="box11"></td><td box_id="box12">city</td></tr><tr><td box_id="box13"></td><td box_id="box14">state</td></tr><tr><td box_id="box15"></td><td box_id="box16">zip</td></tr></table></div>`
                     v2.collapsedValue = createCollapsedTableHTML(v2)
 
-                    // graph.insertEdge(parent, null, relation, v1, v2);
                 } finally {
                     // Updates the display
                     graph.getModel().endUpdate();
@@ -514,13 +610,18 @@
 
                 function createTableHTML(cell) {
                     const container = document.createElement("div")
+                    container.setAttribute("class", "cell-container")
 
-                    const tableHeader = createCollapsedTableHTML(cell)
+                    // const tableHeader = createCollapsedTableHTML(cell)
+
+                    const cellHeader = document.createElement("span")
+                    cellHeader.setAttribute("class", "cell-header typography-h2")
+                    cellHeader.innerHTML = cell.caption
+
+
                     const div = document.createElement("div")
-                    div.setAttribute("style", 'overflow:auto;cursor:default;top:26px;bottom:0px;position:absolute;width:100%;')
+                    div.setAttribute("style", 'box-sizing:border-box;overflow:auto;cursor:default;top:44px;bottom:0px;position:absolute;width: calc(100% - 4px);height: calc(100% - 44px);padding: 0 6px 10px 10px;')
                     const tableBody = document.createElement("table")
-                    tableBody.setAttribute("width", "100%")
-                    tableBody.setAttribute("height", "100%")
                     tableBody.setAttribute("class", "erd")
 
                     const tbody = document.createElement("tbody")
@@ -570,30 +671,37 @@
 
                     tableBody.appendChild(tbody)
                     div.appendChild(tableBody)
-                    container.appendChild(tableHeader)
+                    container.appendChild(cellHeader)
                     container.appendChild(div)
 
                     return container.innerHTML
                 }
 
                 function createCollapsedTableHTML(cell) {
-                    const table = document.createElement("table")
-                    table.setAttribute("style", "overflow:hidden;")
-                    table.setAttribute("width", "100%")
-                    table.setAttribute("height", "100%")
-                    table.setAttribute("border", "1")
-                    table.setAttribute("cellpadding", "4")
-                    table.setAttribute("class", "title")
-                    const tbody = document.createElement("tbody")
-                    const tr = document.createElement("tr")
-                    const th = document.createElement("th")
-                    th.innerText = cell.caption
+                    // const table = document.createElement("table")
+                    // table.setAttribute("style", "overflow:hidden;")
+                    // table.setAttribute("width", "100%")
+                    // table.setAttribute("height", "100%")
+                    // table.setAttribute("border", "1")
+                    // table.setAttribute("cellpadding", "4")
+                    // table.setAttribute("class", "title")
+                    // const tbody = document.createElement("tbody")
+                    // const tr = document.createElement("tr")
+                    // const th = document.createElement("th")
+                    // th.innerText = cell.caption
+                    //
+                    // tr.appendChild(th)
+                    // tbody.appendChild(tr)
+                    // table.appendChild(tbody)
+                    //
+                    // return table
 
-                    tr.appendChild(th)
-                    tbody.appendChild(tr)
-                    table.appendChild(tbody)
+                    const collapsedCell = document.createElement("div")
+                    collapsedCell.setAttribute("class", "collapsed-cell typography-h2")
+                    collapsedCell.innerText = cell.caption
 
-                    return table
+                    return collapsedCell
+
                 }
 
                 var btn1 = mxUtils.button('+', function () {
@@ -605,6 +713,13 @@
                 document.body.appendChild(mxUtils.button('-', function () {
                     graph.zoomOut();
                 }));
+
+
+                document.getElementById("save_button").onclick = () => {
+                    var encoder = new mxCodec();
+                    var node = encoder.encode(graph.getModel());
+                    localStorage.setItem("graph", JSON.stringify(mxUtils.getXml(node)));
+                };
 
                 document.getElementById("log_button").onclick = () => {
                     const dict = new Object()
@@ -692,7 +807,6 @@
 
                         json.boxes.push(box)
                     })
-
 
                     console.log(json)
                 }
@@ -887,6 +1001,10 @@
 
 <button style="top: 500px" id="log_button">
     Log JSON
+</button>
+
+<button style="top: 550px" id="save_button">
+    Save
 </button>
 
 </body>

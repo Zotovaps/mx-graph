@@ -62,6 +62,17 @@
             border: none !important;
         }
 
+        table.erd > tbody tr:nth-child(odd) {
+            background-color: #F7F8FC;
+            border-bottom: 1px solid #DBDEEE;
+        }
+
+        table.erd > tbody tr:nth-child(even) {
+            background-color: #FFFFFF;
+            border-bottom: 1px solid #DBDEEE;
+
+        }
+
         table.erd td {
             border-color: black;
             text-align: left;
@@ -134,6 +145,35 @@
 
         .cell-header.typography-h2 {
             color: #6680FF;
+        }
+
+
+        ul {
+            list-style: none;
+
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+
+            min-height: 48px;
+        }
+
+        li:nth-child(odd) {
+            background-color: #F7F8FC;
+            border-bottom: 1px solid #DBDEEE;
+        }
+
+        li:nth-child(even) {
+            background-color: #FFFFFF;
+            border-bottom: 1px solid #DBDEEE;
+
         }
     </style>
 
@@ -244,7 +284,6 @@
                 //Collapsed/expanded icon override
                 graph.collapsedImage = new mxImage('../icons/arrow-right.svg', 24, 24);
                 graph.expandedImage = new mxImage('../icons/arrow-left.svg', 24, 24);
-
 
 
                 // // Uses the entity edge style as default
@@ -459,153 +498,272 @@
                 // is normally the first child of the root (ie. layer 0).
                 var parent = graph.getDefaultParent();
 
+                var links_dict = {}
                 // Adds cells to the model in a single step
-                var width = 160;
-                var height = 230;
                 graph.getModel().beginUpdate();
                 try {
-                    var v1 = graph.insertVertex(parent, null, '', 20, 20, width, height);
-                    v1.caption = "Test"
-                    v1.body = {
-                        "rows": [
+                    let data = {
+                        "boxes": [
                             {
-                                "columns": [
-                                    {
-                                        "item": {
-                                            "box_id": "item1",
-                                            "caption": "aaa"
-                                        }
+                                "id": "box_rows_columns_example",
+                                "header": {
+                                    "caption": "Test",
+                                    "position": {
+                                        "top": 10,
+                                        "left": 100
                                     },
-                                    {
-                                        "rows": [
-                                            {
-                                                "columns": [
-                                                    {
-                                                        "item": {
-                                                            "box_id": "item2",
-                                                            "caption": "222"
-                                                        }
-                                                    }
-                                                ]
-
-                                            },
-                                            {
-                                                "columns": [
-                                                    {
-                                                        "item": {
-                                                            "box_id": "item3",
-                                                            "caption": "333"
-                                                        }
-                                                    }
-                                                ]
-
-                                            },
-                                            {
-                                                "columns": [
-                                                    {
-                                                        "item": {
-                                                            "box_id": "itemopopo",
-                                                            "caption": "444"
-                                                        }
-                                                    }
-                                                ]
-
-                                            },
-                                        ]
+                                    "size": {
+                                        "width": 345,
+                                        "height": 523
                                     }
-                                ]
+                                },
+                                "body": {
+                                    "rows": [
+                                        {
+                                            "columns": [
+                                                {
+                                                    "item": {
+                                                        "box_id": "item1",
+                                                        "caption": "aaa"
+                                                    }
+                                                },
+                                                {
+                                                    "rows": [
+                                                        {
+                                                            "columns": [
+                                                                {
+                                                                    "item": {
+                                                                        "box_id": "item2",
+                                                                        "caption": "222"
+                                                                    }
+                                                                }
+                                                            ]
+
+                                                        },
+                                                        {
+                                                            "columns": [
+                                                                {
+                                                                    "item": {
+                                                                        "box_id": "item3",
+                                                                        "caption": "333"
+                                                                    }
+                                                                }
+                                                            ]
+
+                                                        },
+                                                        {
+                                                            "columns": [
+                                                                {
+                                                                    "item": {
+                                                                        "box_id": "itemopopo",
+                                                                        "caption": "444"
+                                                                    }
+                                                                }
+                                                            ]
+
+                                                        },
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "columns": [
+                                                {
+                                                    "item": {
+                                                        "box_id": "item4",
+                                                        "caption": "ddd"
+                                                    }
+                                                },
+                                                {
+                                                    "item": {
+                                                        "caption": "eee"
+                                                    }
+                                                },
+                                                {
+                                                    "rows": [
+                                                        {
+                                                            "columns": [
+                                                                {
+                                                                    "item": {
+                                                                        "box_id": "itemqw",
+                                                                        "caption": "222"
+                                                                    }
+                                                                }
+                                                            ]
+
+                                                        },
+                                                        {
+                                                            "columns": [
+                                                                {
+                                                                    "item": {
+                                                                        "box_id": "itemer",
+                                                                        "caption": "333"
+                                                                    }
+                                                                }
+                                                            ]
+
+                                                        },
+                                                        {
+                                                            "columns": [
+                                                                {
+                                                                    "item": {
+                                                                        "box_id": "itemty",
+                                                                        "caption": "444"
+                                                                    }
+                                                                }
+                                                            ]
+
+                                                        },
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "columns": [
+                                                {
+                                                    "item": {
+                                                        "box_id": "item7",
+                                                        "caption": "ggg"
+                                                    }
+                                                },
+                                                {
+                                                    "item": {
+                                                        "box_id": "item8",
+                                                        "caption": "hhh"
+                                                    }
+                                                },
+                                                {
+                                                    "item": {
+                                                        "box_id": "item9",
+                                                        "caption": "kkk"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
                             },
                             {
-                                "columns": [
-                                    {
-                                        "item": {
-                                            "box_id": "item4",
-                                            "caption": "ddd"
-                                        }
+                                "id": "box_json_example",
+                                "header": {
+                                    "caption": "Test2",
+                                    "position": {
+                                        "top": 10,
+                                        "left": 600
                                     },
-                                    {
-                                        "item": {
-                                            "caption": "eee"
-                                        }
-                                    },
-                                    {
-                                        "rows": [
-                                            {
-                                                "columns": [
-                                                    {
-                                                        "item": {
-                                                            "box_id": "itemqw",
-                                                            "caption": "222"
-                                                        }
-                                                    }
-                                                ]
-
-                                            },
-                                            {
-                                                "columns": [
-                                                    {
-                                                        "item": {
-                                                            "box_id": "itemer",
-                                                            "caption": "333"
-                                                        }
-                                                    }
-                                                ]
-
-                                            },
-                                            {
-                                                "columns": [
-                                                    {
-                                                        "item": {
-                                                            "box_id": "itemty",
-                                                            "caption": "444"
-                                                        }
-                                                    }
-                                                ]
-
-                                            },
-                                        ]
+                                    "size": {
+                                        "width": 345,
+                                        "height": 523
                                     }
-                                ]
-                            },
-                            {
-                                "columns": [
-                                    {
-                                        "item": {
-                                            "box_id": "item7",
-                                            "caption": "ggg"
-                                        }
-                                    },
-                                    {
-                                        "item": {
-                                            "box_id": "item8",
-                                            "caption": "hhh"
-                                        }
-                                    },
-                                    {
-                                        "item": {
-                                            "box_id": "item9",
-                                            "caption": "kkk"
+                                },
+                                "body": {
+                                    "json": {
+                                        "type": "basket",
+                                        "beans": 47,
+                                        "apples": 7,
+                                        "oranges": 23,
+                                        "brand": "ConvertSimple",
+                                        "ratio": {
+                                            "box_id": "itemratio"
+                                        },
+                                        "fees": {
+                                            "cleaning": "$4.50",
+                                            "baking": "$27.30",
+                                            "commission": {
+                                                "box_id": "itemcapy",
+                                                "box_links": [
+                                                    {
+                                                        "link": {
+                                                            "typelink": 2,
+                                                            "box_id": "box_rows_columns_example:item1"
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            "descriptors": [
+                                                "clean",
+                                                "fresh",
+                                                "juicy",
+                                                "delicious"
+                                            ]
                                         }
                                     }
-                                ]
+                                }
                             }
                         ]
                     }
-                    v1.id = "box_rows_columns_example";
-                    v1.geometry.alternateBounds = new mxRectangle(0, 0, width, 44);
-                    v1.value = createTableHTML(v1)
-                    v1.collapsedValue = createCollapsedTableHTML(v1)
 
 
-                    var v2 = graph.insertVertex(parent, null, '', 400, 150, width, height);
+                    data.boxes.map(c => {
+
+                        let v = graph.insertVertex(parent, null, '', c.header.position.left, c.header.position.top, c.header.size.width, c.header.size.height);
+                        v.caption = c.header.caption;
+                        v.body = c.body;
+                        v.id = c.id;
+                        v.geometry.alternateBounds = new mxRectangle(0, 0, c.header.size.width, 44);
+                        if (c.body.rows) {
+                            v.value = createTableHTML(v)
+                        } else if (c.body.json) {
+                            v.value = createListHTML(v)
+                        }
+                        v.collapsedValue = createCollapsedTableHTML(v)
+
+                    })
+
+                    var vertices = graph.getChildVertices(parent);
+
+
+                    Object.keys(links_dict).forEach(k => {
+
+                        if (links_dict[k].box_links) {
+
+                            links_dict[k].box_links.forEach(link => {
+                                var relation = doc.createElement('Relation');
+                                relation.setAttribute('sourceTd', k);
+                                relation.setAttribute('targetTd', link.link.box_id.split(":")[1]);
+
+                                graph.insertEdge(parent, null, relation, vertices.find(v => v.id === links_dict[k].id), vertices.find(v => v.id === link.link.box_id.split(":")[0]));
+
+                            })
+                        }
+                    })
+
+                    var v2 = graph.insertVertex(parent, null, '', 1200, 150, 160, 300);
                     v2.caption = "Customers"
-                    v2.geometry.alternateBounds = new mxRectangle(0, 0, width, 44);
+                    v2.geometry.alternateBounds = new mxRectangle(0, 0, 130, 44);
                     v2.value = `<table style="overflow:hidden;" width="100%" border="1" cellpadding="4" class="title"><tr><th colspan="2">${v2.caption}</th></tr></table><div style="overflow:auto;cursor:default;top:26px;bottom:0px;position:absolute;width:100%;"><table width="100%" height="100%" border="1" cellpadding="4" class="erd"><tr><td box_id="box1">123</td><td box_id="box2"><u>customerId</u></td></tr><tr><td box_id="box3"></td><td box_id="box4">number</td></tr><tr><td box_id="box5"></td><td box_id="box6">firstName</td></tr><tr><td box_id="box7"></td><td box_id="box8">lastName</td></tr><tr><td box_id="box9"></td><td box_id="box10">streetAddress</td></tr><tr><td box_id="box11"></td><td box_id="box12">city</td></tr><tr><td box_id="box13"></td><td box_id="box14">state</td></tr><tr><td box_id="box15"></td><td box_id="box16">zip</td></tr></table></div>`
                     v2.collapsedValue = createCollapsedTableHTML(v2)
 
                 } finally {
                     // Updates the display
                     graph.getModel().endUpdate();
+                }
+
+                function createCollapsedTableHTML(cell) {
+                    // const table = document.createElement("table")
+                    // table.setAttribute("style", "overflow:hidden;")
+                    // table.setAttribute("width", "100%")
+                    // table.setAttribute("height", "100%")
+                    // table.setAttribute("border", "1")
+                    // table.setAttribute("cellpadding", "4")
+                    // table.setAttribute("class", "title")
+                    // const tbody = document.createElement("tbody")
+                    // const tr = document.createElement("tr")
+                    // const th = document.createElement("th")
+                    // th.innerText = cell.caption
+                    //
+                    // tr.appendChild(th)
+                    // tbody.appendChild(tr)
+                    // table.appendChild(tbody)
+                    //
+                    // return table
+
+                    const collapsedCell = document.createElement("div")
+                    collapsedCell.setAttribute("class", "collapsed-cell typography-h2")
+                    collapsedCell.innerText = cell.caption
+
+                    return collapsedCell
+
                 }
 
                 function createTableHTML(cell) {
@@ -645,10 +803,18 @@
                                     const tr2 = document.createElement("tr")
 
                                     r.columns.forEach(c => {
+
                                         const td2 = document.createElement("td")
-                                        td2.setAttribute("box_id", c.item.box_id)
+
+                                        if (c.item.box_id) {
+                                            td2.setAttribute("box_id", c.item.box_id)
+                                            links_dict[c.item.box_id] = c.item
+                                            links_dict[c.item.box_id].id = cell.id
+                                        }
                                         td2.innerText = c.item.caption
                                         tr2.appendChild(td2)
+
+
                                     })
 
                                     tbody2.appendChild(tr2)
@@ -657,10 +823,16 @@
                                 tableBody2.appendChild(tbody2)
                                 td2.appendChild(tableBody2)
                                 tr.appendChild(td2)
-                            }
-                            else {
+                            } else {
                                 const td = document.createElement("td")
-                                td.setAttribute("box_id", column.item.box_id)
+
+                                if (column.item.box_id) {
+                                    td.setAttribute("box_id", column.item.box_id)
+                                    links_dict[column.item.box_id] = column.item
+                                    links_dict[column.item.box_id].id = cell.id
+
+                                }
+
                                 td.innerText = column.item.caption
                                 tr.appendChild(td)
                             }
@@ -677,32 +849,79 @@
                     return container.innerHTML
                 }
 
-                function createCollapsedTableHTML(cell) {
-                    // const table = document.createElement("table")
-                    // table.setAttribute("style", "overflow:hidden;")
-                    // table.setAttribute("width", "100%")
-                    // table.setAttribute("height", "100%")
-                    // table.setAttribute("border", "1")
-                    // table.setAttribute("cellpadding", "4")
-                    // table.setAttribute("class", "title")
-                    // const tbody = document.createElement("tbody")
-                    // const tr = document.createElement("tr")
-                    // const th = document.createElement("th")
-                    // th.innerText = cell.caption
+                function createListHTML(cell) {
+                    const container = document.createElement("div")
+                    container.setAttribute("class", "cell-container")
+
+
+                    const cellHeader = document.createElement("span")
+                    cellHeader.setAttribute("class", "cell-header typography-h2")
+                    cellHeader.innerHTML = cell.caption
+
+
+                    const div = document.createElement("div")
+                    div.setAttribute("style", 'box-sizing:border-box;overflow:auto;cursor:default;top:44px;bottom:0px;position:absolute;width: calc(100% - 4px);height: calc(100% - 44px);padding: 0 6px 10px 10px;')
+                    const ul = document.createElement("table")
+                    ul.setAttribute("class", "erd")
+
+                    const tBody = document.createElement("tbody")
+
+                    let cellHtml = "";
+                    Object.keys(cell.body.json).forEach(key => {
+                        cellHtml += drawJson(key, cell.body.json[key], 0, "", links_dict, cell.id);
+                    })
+
+                    // cell.body.rows.forEach(row => {
+                    //     const tr = document.createElement("tr")
+                    //     row.columns.forEach(column => {
                     //
-                    // tr.appendChild(th)
-                    // tbody.appendChild(tr)
-                    // table.appendChild(tbody)
+                    //         if (column.rows) {
+                    //             const td2 = document.createElement("td")
+                    //             const tableBody2 = document.createElement("table")
+                    //             tableBody2.setAttribute("width", "100%")
+                    //             tableBody2.setAttribute("height", "100%")
+                    //             tableBody2.setAttribute("border", "1")
+                    //             tableBody2.setAttribute("cellpadding", "4")
+                    //             tableBody2.setAttribute("class", "erd")
                     //
-                    // return table
+                    //             const tbody2 = document.createElement("tbody")
+                    //
+                    //             column.rows.forEach(r => {
+                    //                 const tr2 = document.createElement("tr")
+                    //
+                    //                 r.columns.forEach(c => {
+                    //                     const td2 = document.createElement("td")
+                    //                     td2.setAttribute("box_id", c.item.box_id)
+                    //                     td2.innerText = c.item.caption
+                    //                     tr2.appendChild(td2)
+                    //                 })
+                    //
+                    //                 tbody2.appendChild(tr2)
+                    //
+                    //             })
+                    //             tableBody2.appendChild(tbody2)
+                    //             td2.appendChild(tableBody2)
+                    //             tr.appendChild(td2)
+                    //         }
+                    //         else {
+                    //             const td = document.createElement("td")
+                    //             td.setAttribute("box_id", column.item.box_id)
+                    //             td.innerText = column.item.caption
+                    //             tr.appendChild(td)
+                    //         }
+                    //
+                    //     })
+                    //     tbody.appendChild(tr)
+                    // })
+                    tBody.innerHTML = cellHtml;
+                    ul.appendChild(tBody)
+                    div.appendChild(ul)
+                    container.appendChild(cellHeader)
+                    container.appendChild(div)
 
-                    const collapsedCell = document.createElement("div")
-                    collapsedCell.setAttribute("class", "collapsed-cell typography-h2")
-                    collapsedCell.innerText = cell.caption
-
-                    return collapsedCell
-
+                    return container.innerHTML
                 }
+
 
                 var btn1 = mxUtils.button('+', function () {
                     graph.zoomIn();
@@ -722,7 +941,7 @@
                 };
 
                 document.getElementById("log_button").onclick = () => {
-                    const dict = new Object()
+                    const dict = {}
                     const json = new Object()
                     json.boxes = []
                     const arrayCells = graph.getChildVertices(graph.defaultParent)
@@ -814,37 +1033,38 @@
 
                 function recursiveRows(data, dict, result = []) {
 
-                        if (data.children.length > 0 && data.children[0].tagName === 'TABLE') {
-                            if (data.children[0].querySelector("table.erd> tbody").children.length > 0) {
-                                const rows = []
+                    if (data.children.length > 0 && data.children[0].tagName === 'TABLE') {
+                        if (data.children[0].querySelector("table.erd> tbody").children.length > 0) {
+                            const rows = []
 
-                                for (const tr of data.children[0].querySelector("table.erd> tbody").children) {
-                                    const row = new Object()
-                                    row.columns = []
+                            for (const tr of data.children[0].querySelector("table.erd> tbody").children) {
+                                const row = new Object()
+                                row.columns = []
 
-                                    for (const td of tr.children) {
-                                        const column = recursiveRows(td, dict)
+                                for (const td of tr.children) {
+                                    const column = recursiveRows(td, dict)
 
-                                        row.columns.push(column)
-                                    }
-
-                                    rows.push(row)
+                                    row.columns.push(column)
                                 }
 
-                                return rows
+                                rows.push(row)
                             }
-                        }
-                        else {
-                            const column = new Object()
-                            column.item = new Object()
-                            column.item.caption = data.innerText
-                            column.item.box_id = data.getAttribute("box_id")
 
-                            dict[column.item.box_id] = column.item
-
-                            return column
+                            return rows
                         }
+                    } else {
+                        const column = new Object()
+                        column.item = new Object()
+                        column.item.caption = data.innerText
+                        column.item.box_id = data.getAttribute("box_id")
+
+                        dict[column.item.box_id] = column.item
+
+                        return column
+                    }
                 }
+
+
             }
         };
 
@@ -987,6 +1207,29 @@
             }
 
             return {x: x, y: y}
+        }
+
+        // Рекурсивная функция генерации DOM по JSON
+        const drawJson = function (key, data, level = 0, html = "", links_dict, cell_id) {
+            if (typeof (data) === "object") {
+
+                if (data.box_id) {
+                    html += `<tr><td box_id=${data.box_id} ><span style="margin-left: calc(10px * ${level})">${key}:</span></td></tr>`
+                    links_dict[data.box_id] = data
+                    links_dict[data.box_id].id = cell_id
+
+                } else {
+                    html += `<tr><td><span style="margin-left: calc(10px * ${level})">${key}:</span></td></tr>`
+
+                }
+                Object.keys(data).forEach(k => {
+                    if (k !== "box_links" && k !== "box_id")
+                        html += drawJson(k, data[k], level + 1, "", links_dict, cell_id)
+                })
+                return html
+            } else {
+                return `<tr><td><span style="margin-left: calc(10px * ${level})">${key}:${data}</span></td></tr>`
+            }
         }
     </script>
 </head>

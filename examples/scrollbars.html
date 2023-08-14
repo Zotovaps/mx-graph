@@ -727,13 +727,7 @@
                             })
                         }
                     })
-
-                    var v2 = graph.insertVertex(parent, null, '', 1200, 150, 160, 300);
-                    v2.caption = "Customers"
-                    v2.geometry.alternateBounds = new mxRectangle(0, 0, 130, 44);
-                    v2.value = `<table style="overflow:hidden;" width="100%" border="1" cellpadding="4" class="title"><tr><th colspan="2">${v2.caption}</th></tr></table><div style="overflow:auto;cursor:default;top:26px;bottom:0px;position:absolute;width:100%;"><table width="100%" height="100%" border="1" cellpadding="4" class="erd"><tr><td box_id="box1">123</td><td box_id="box2"><u>customerId</u></td></tr><tr><td box_id="box3"></td><td box_id="box4">number</td></tr><tr><td box_id="box5"></td><td box_id="box6">firstName</td></tr><tr><td box_id="box7"></td><td box_id="box8">lastName</td></tr><tr><td box_id="box9"></td><td box_id="box10">streetAddress</td></tr><tr><td box_id="box11"></td><td box_id="box12">city</td></tr><tr><td box_id="box13"></td><td box_id="box14">state</td></tr><tr><td box_id="box15"></td><td box_id="box16">zip</td></tr></table></div>`
-                    v2.collapsedValue = createCollapsedTableHTML(v2)
-
+                    
                 } finally {
                     // Updates the display
                     graph.getModel().endUpdate();
@@ -960,7 +954,7 @@
                         const tmpDiv = document.createElement("div")
                         tmpDiv.innerHTML = cell.value
 
-                        box.header.caption = tmpDiv.querySelector("table.title> tbody > tr > th").innerText
+                        box.header.caption = tmpDiv.querySelector("span.cell-header").innerText
 
 
                         if (tmpDiv.querySelector("table.erd> tbody").children.length > 0) {

@@ -1,4 +1,77 @@
 /**
+ * Function: createSvg
+ *
+ * Creates and returns the DOM nodes for the SVG display.
+ */
+mxGraphView.prototype.createSvg = function()
+{
+    var container = this.graph.container;
+    this.canvas = document.createElementNS(mxConstants.NS_SVG, 'g');
+
+    // For background image
+    this.backgroundPane = document.createElementNS(mxConstants.NS_SVG, 'g');
+    this.canvas.appendChild(this.backgroundPane);
+
+    // Adds two layers (background is early feature)
+    this.drawPane = document.createElementNS(mxConstants.NS_SVG, 'g');
+    this.canvas.appendChild(this.drawPane);
+
+    this.overlayPane = document.createElementNS(mxConstants.NS_SVG, 'g');
+    this.canvas.appendChild(this.overlayPane);
+
+    this.decoratorPane = document.createElementNS(mxConstants.NS_SVG, 'g');
+    this.canvas.appendChild(this.decoratorPane);
+
+    var root = document.createElementNS(mxConstants.NS_SVG, 'svg');
+    root.style.left = '0px';
+    root.style.top = '0px';
+    root.style.width = '100%';
+    root.style.height = '100%';
+
+    // NOTE: In standards mode, the SVG must have block layout
+    // in order for the container DIV to not show scrollbars.
+    root.style.display = 'block';
+    root.appendChild(this.canvas);
+
+    var defs = document.createElementNS(mxConstants.NS_SVG, 'defs')
+    defs.innerHTML = "        <linearGradient id=\"line-gradient-blue\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n" +
+        "            <stop offset=\"0%\" stop-color=\"#4A67F4\"></stop>\n" +
+        "            <stop offset=\"100%\" stop-color=\"#99DDFF\"></stop>\n" +
+        "        </linearGradient>\n" +
+        "\n" +
+        "        <linearGradient id=\"line-gradient-purple\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n" +
+        "            <stop offset=\"0%\" stop-color=\"#4A67F4\"></stop>\n" +
+        "            <stop offset=\"100%\" stop-color=\"#9966FF\"></stop>\n" +
+        "        </linearGradient>\n" +
+        "\n" +
+        "        <linearGradient id=\"line-gradient-pink\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n" +
+        "            <stop offset=\"0%\" stop-color=\"#9966FF\"></stop>\n" +
+        "            <stop offset=\"100%\" stop-color=\"#FF66B2\"></stop>\n" +
+        "        </linearGradient>\n" +
+        "\n" +
+        "        <linearGradient id=\"line-gradient-orange\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n" +
+        "            <stop offset=\"0%\" stop-color=\"#FF66B2\"></stop>\n" +
+        "            <stop offset=\"100%\" stop-color=\"#FF9999\"></stop>\n" +
+        "        </linearGradient>\n"
+
+    root.appendChild(defs);
+
+
+    // Workaround for scrollbars in IE11 and below
+    if (mxClient.IS_IE || mxClient.IS_IE11)
+    {
+        root.style.overflow = 'hidden';
+    }
+
+    if (container != null)
+    {
+        container.appendChild(root);
+        this.updateContainerStyle(container);
+    }
+};
+
+
+/**
  * Function: getControlBounds
  *
  * Returns the bounds to be used to draw the control (folding icon) of the
@@ -61,6 +134,7 @@ mxGraph.prototype.applyCustomSetting = function () {
     mxConstants.VERTEX_SELECTION_STROKEWIDTH = 2;
 
 
+
     // Стили для ребра
     mxMarker.addMarker('circle', function (canvas, shape, type, pe, unitX, unitY, size, source, sw, filled) {
         var a = size / 2;
@@ -88,14 +162,26 @@ mxGraph.prototype.applyCustomSetting = function () {
     style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_CONNECTOR;
     style[mxConstants.STYLE_ROUNDED] = 1;
     style[mxConstants.STYLE_STROKECOLOR] = '#2D49D7';
-    style[mxConstants.STYLE_FONTCOLOR] = '#446299';
     style[mxConstants.STYLE_STROKEWIDTH] = 2;
     style[mxConstants.STYLE_ENDSIZE] = 15;
     style[mxConstants.STYLE_STARTSIZE] = 15;
     style[mxConstants.STYLE_ENDARROW] = 'circle';
     style[mxConstants.STYLE_STARTARROW] = 'circle';
 
-    this.getStylesheet().putCellStyle('circleArrow', style);
+    this.getStylesheet().putCellStyle('edge:1', style);
+
+
+    style = {};
+    style[mxConstants.STYLE_EDGE] = mxEdgeStyle.ElbowConnector;
+    style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_CONNECTOR;
+    style[mxConstants.STYLE_DASHED] = 1;
+    style[mxConstants.STYLE_ROUNDED] = 1;
+    style[mxConstants.STYLE_STROKECOLOR] = '#B2002F';
+    style[mxConstants.STYLE_STROKEWIDTH] = 2;
+    style[mxConstants.STYLE_ENDSIZE] = 15;
+    style[mxConstants.STYLE_STARTSIZE] = 15;
+
+    this.getStylesheet().putCellStyle('edge:2', style);
 
 
     // Стили для свернутой контейнера
@@ -120,8 +206,8 @@ mxGraph.prototype.applyCustomSetting = function () {
     style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
     style[mxConstants.STYLE_PERIMETER] = mxPerimeter.EntityPerimeter;
     style[mxConstants.STYLE_FILLCOLOR] = '#FFFFFF';
-    style[mxConstants.STYLE_STROKECOLOR] = '#D2D7E3';
-    style[mxConstants.STYLE_STROKEWIDTH] = 1;
+    style[mxConstants.STYLE_STROKECOLOR] = 'url(#line-gradient-blue)';
+    style[mxConstants.STYLE_STROKEWIDTH] = 2;
     style[mxConstants.STYLE_ROUNDED] = 1;
     style[mxConstants.STYLE_ABSOLUTE_ARCSIZE] = 1;
     style[mxConstants.STYLE_ARCSIZE] = "16";
@@ -129,7 +215,24 @@ mxGraph.prototype.applyCustomSetting = function () {
     style[mxConstants.STYLE_FONTCOLOR] = "#24293D";
     style[mxConstants.STYLE_OVERFLOW] = 'fill';
 
-    this.getStylesheet().putCellStyle('vertex', style);
+    this.getStylesheet().putCellStyle('vertex:1', style);
+
+
+    style = {};
+    style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_TOP;
+    style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_LEFT;
+    style[mxConstants.STYLE_PERIMETER] = mxPerimeter.EntityPerimeter;
+    style[mxConstants.STYLE_FILLCOLOR] = '#FFFFFF';
+    style[mxConstants.STYLE_STROKECOLOR] = 'url(#line-gradient-purple)';
+    style[mxConstants.STYLE_STROKEWIDTH] = 2;
+    style[mxConstants.STYLE_ROUNDED] = 1;
+    style[mxConstants.STYLE_ABSOLUTE_ARCSIZE] = 1;
+    style[mxConstants.STYLE_ARCSIZE] = "16";
+    style[mxConstants.STYLE_FONTSIZE] = "14";
+    style[mxConstants.STYLE_FONTCOLOR] = "#24293D";
+    style[mxConstants.STYLE_OVERFLOW] = 'fill';
+
+    this.getStylesheet().putCellStyle('vertex:2', style);
 };
 
 
@@ -153,12 +256,12 @@ mxGraph.prototype.getCellStyle = function (cell) {
 
     // Gets the default style for the cell
     if (this.model.isEdge(cell)) {
-        style = this.stylesheet.getEdgeStyle();
+        style = this.getStylesheet().getCellStyle(`edge:${cell.type ? cell.type : 1}`);
     } else {
         if (this.model.isCollapsed(cell)) {
-            style = this.stylesheet.getCollapsedVertexStyle();
+            style = this.getStylesheet().getCellStyle('collapsedVertex');
         } else {
-            style = this.stylesheet.getVertexStyle();
+            style = this.getStylesheet().getCellStyle(`vertex:${cell.type}`)
         }
     }
 
@@ -174,34 +277,6 @@ mxGraph.prototype.getCellStyle = function (cell) {
 
     return style;
 };
-
-/**
- * Function: getCollapsedVertexStyle
- *
- * Returns the default style for collapsed vertices.
- *
- */
-mxStylesheet.prototype.getCollapsedVertexStyle = function () {
-    return this.styles['collapsedVertex'];
-};
-
-/**
- * Function: getVertexStyle
- *
- * Returns the default style for not collapsed vertices.
- **/
-mxStylesheet.prototype.getVertexStyle = function () {
-    return this.styles['vertex'];
-}
-
-/**
- * Function: getEdgeStyle
- *
- * Returns the default style for circle edge.
- **/
-mxStylesheet.prototype.getEdgeStyle = function () {
-    return this.styles['circleArrow'];
-}
 
 
 /**

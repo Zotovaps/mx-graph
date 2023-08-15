@@ -68,7 +68,7 @@
         }
 
         table.erd > tbody tr:nth-child(even) {
-            background-color: #FFFFFF;
+            /*background-color: #FFFFFF;*/
             border-bottom: 1px solid #DBDEEE;
 
         }
@@ -78,7 +78,7 @@
             text-align: left;
             color: black;
 
-            padding: 4px;
+            padding: 4px 0;
 
         }
 
@@ -187,11 +187,9 @@
     <script type="text/javascript" src="./custom.js"></script>
 
 
-    <!-- Example code -->
+    <!-- Main code -->
     <script type="text/javascript">
-        // Program starts here. Creates a sample graph in the
-        // DOM node with the specified ID. This function is invoked
-        // from the onLoad event handler of the document (see below).
+
         function main(container) {
             // Checks if the browser is supported
             if (!mxClient.isBrowserSupported()) {
@@ -286,40 +284,6 @@
                 graph.expandedImage = new mxImage('../icons/arrow-left.svg', 24, 24);
 
 
-                // // Uses the entity edge style as default
-                // mxMarker.addMarker('circle', function (canvas, shape, type, pe, unitX, unitY, size, source, sw, filled) {
-                //     var a = size / 2;
-                //
-                //     var pt = pe.clone();
-                //     pe.x -= unitX * a;
-                //     pe.y -= unitY * a;
-                //
-                //     return function () {
-                //         canvas.state.fillColor = "#FFFFFF"
-                //         canvas.state.strokeWidth = 3
-                //
-                //         canvas.ellipse(pt.x - a, pt.y - a, size, size);
-                //
-                //         if (filled) {
-                //             canvas.fillAndStroke();
-                //         } else {
-                //             canvas.stroke();
-                //         }
-                //     };
-                // })
-                //
-                // graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_EDGE] = mxEdgeStyle.ElbowConnector;
-                // graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_CONNECTOR;
-                // graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_ROUNDED] = 1;
-                // graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_STROKECOLOR] = '#2D49D7';
-                // graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_FONTCOLOR] = '#446299';
-                // graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_STROKEWIDTH] = 2;
-                // graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_ENDSIZE] = 15;
-                // graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_STARTSIZE] = 15;
-                // graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_ENDARROW] = 'circle';
-                // graph.stylesheet.getDefaultEdgeStyle()[mxConstants.STYLE_STARTARROW] = 'circle';
-
-
                 // Allows new connections to be made but do not allow existing
                 // connections to be changed for the sake of simplicity of this
                 // example
@@ -398,7 +362,7 @@
                     this.currentTd = null;
 
                     // Checks if we're dealing with a row in the correct table
-                    if (getParentDiv(target) && target.getAttribute("box_id") !== 'undefined') {
+                    if (getParentDiv(target) && target.getAttribute("box_id")) {
                         this.currentTd = target.getAttribute("box_id");
                     } else {
                         target = null;
@@ -439,7 +403,7 @@
                         if (this.currentTd != null) {
                             this.edgeState.cell.value.setAttribute('targetTd', this.currentTd);
                         } else {
-                            this.edgeState.cell.value.setAttribute('targetTd', '0');
+                            // this.edgeState.cell.value.setAttribute('targetTd', '0');
                         }
 
                         // Destroys icon to prevent event redirection via image in IE
@@ -482,12 +446,6 @@
                 // User objects (data) for the individual cells
                 var doc = mxUtils.createXmlDocument();
 
-                // Same should be used to create the XML node for the table
-                // description and the rows (most probably as child nodes)
-                // var relation = doc.createElement('Relation');
-                // relation.setAttribute('sourceRow', '2');
-                // relation.setAttribute('targetRow', '6');
-
                 // Enables rubberband selection
                 new mxRubberband(graph);
 
@@ -506,6 +464,7 @@
                         "boxes": [
                             {
                                 "id": "box_rows_columns_example",
+                                "type": 1,
                                 "header": {
                                     "caption": "Test",
                                     "position": {
@@ -628,7 +587,6 @@
                                                 },
                                                 {
                                                     "item": {
-                                                        "box_id": "item8",
                                                         "caption": "hhh"
                                                     }
                                                 },
@@ -645,6 +603,7 @@
                             },
                             {
                                 "id": "box_json_example",
+                                "type": 2,
                                 "header": {
                                     "caption": "Test2",
                                     "position": {
@@ -664,7 +623,15 @@
                                         "oranges": 23,
                                         "brand": "ConvertSimple",
                                         "ratio": {
-                                            "box_id": "itemratio"
+                                            "box_id": "itemratio",
+                                            "box_links": [
+                                                {
+                                                    "link": {
+                                                        "typelink": 1,
+                                                        "box_id": "box_rows_columns_example:item1"
+                                                    }
+                                                }
+                                            ]
                                         },
                                         "fees": {
                                             "cleaning": "$4.50",
@@ -693,10 +660,10 @@
                         ]
                     }
 
-
                     data.boxes.map(c => {
 
                         let v = graph.insertVertex(parent, null, '', c.header.position.left, c.header.position.top, c.header.size.width, c.header.size.height);
+                        v.type = c.type;
                         v.caption = c.header.caption;
                         v.body = c.body;
                         v.id = c.id;
@@ -712,7 +679,6 @@
 
                     var vertices = graph.getChildVertices(parent);
 
-
                     Object.keys(links_dict).forEach(k => {
 
                         if (links_dict[k].box_links) {
@@ -722,7 +688,8 @@
                                 relation.setAttribute('sourceTd', k);
                                 relation.setAttribute('targetTd', link.link.box_id.split(":")[1]);
 
-                                graph.insertEdge(parent, null, relation, vertices.find(v => v.id === links_dict[k].id), vertices.find(v => v.id === link.link.box_id.split(":")[0]));
+                                var e = graph.insertEdge(parent, null, relation, vertices.find(v => v.id === links_dict[k].id), vertices.find(v => v.id === link.link.box_id.split(":")[0]));
+                                e.type = link.link.typelink;
 
                             })
                         }
@@ -788,7 +755,6 @@
                                 tableBody2.setAttribute("width", "100%")
                                 tableBody2.setAttribute("height", "100%")
                                 tableBody2.setAttribute("border", "1")
-                                tableBody2.setAttribute("cellpadding", "4")
                                 tableBody2.setAttribute("class", "erd")
 
                                 const tbody2 = document.createElement("tbody")
@@ -1057,8 +1023,6 @@
                         return column
                     }
                 }
-
-
             }
         };
 
@@ -1174,8 +1138,13 @@
 
             let offset = getOffsetValues(td, div)
 
-
-            var x = state.x + (offset.x + td.offsetWidth / 2) * s;
+            var x
+            if (offset.x === 10) {
+                x = state.x;
+            }
+            else {
+                x = state.x + (offset.x + td.offsetWidth) * s
+            }
             x = Math.min(state.x + state.width, Math.max(state.x, x));
 
             return x;
@@ -1217,7 +1186,7 @@
 
                 }
                 Object.keys(data).forEach(k => {
-                    if (k !== "box_links" && k !== "box_id")
+                    if (k !== "box_links" && k !== "box_id" && k !== "id")
                         html += drawJson(k, data[k], level + 1, "", links_dict, cell_id)
                 })
                 return html
@@ -1233,7 +1202,7 @@
 
 <!-- Creates a container for the graph with a grid wallpaper. Width, height and cursor in the style are for IE only -->
 <div id="graphContainer"
-     style="cursor:default;position:absolute;top:30px;left:0px;bottom:0px;right:0px;background:url('editors/images/grid.gif')">
+     style="cursor:default;position:absolute;top:30px;left:0;bottom:0;right:0;">
 </div>
 
 <button style="top: 500px" id="log_button">

@@ -452,15 +452,15 @@
                 // Enables key handling (eg. escape)
                 new mxKeyHandler(graph);
 
-                // Gets the default parent for inserting new cells. This
-                // is normally the first child of the root (ie. layer 0).
-                var parent = graph.getDefaultParent();
 
+                var parent = graph.getDefaultParent();
                 var links_dict = {}
+
+                var data
                 // Adds cells to the model in a single step
                 graph.getModel().beginUpdate();
                 try {
-                    let data = {
+                    data = {
                         "boxes": [
                             {
                                 "id": "box_rows_columns_example",
@@ -628,7 +628,7 @@
                                                 {
                                                     "link": {
                                                         "typelink": 1,
-                                                        "box_id": "box_rows_columns_example:item1"
+                                                        "box_id": "box_rows_columns_example:item3"
                                                     }
                                                 }
                                             ]
@@ -695,7 +695,7 @@
                             })
                         }
                     })
-                    
+
                 } finally {
                     // Updates the display
                     graph.getModel().endUpdate();
@@ -926,69 +926,125 @@
 
                         if (tmpDiv.querySelector("table.erd> tbody").children.length > 0) {
                             box.body = new Object()
-                            box.body.rows = []
-                            for (const tr of tmpDiv.querySelector("table.erd> tbody").children) {
-                                const row = new Object()
-                                row.columns = []
 
-                                for (const td of tr.children) {
-                                    const column = recursiveRows(td, dict)
+                            if (cell.body.json) {
 
-                                    row.columns.push(column)
+                            } else if (cell.body.rows) {
+                                box.body.rows = []
+                                for (const tr of tmpDiv.querySelector("table.erd> tbody").children) {
+                                    const row = new Object()
+                                    row.columns = []
+
+                                    for (const td of tr.children) {
+                                        const column = recursiveRows(td, dict)
+
+                                        row.columns.push(column)
+                                    }
+
+                                    box.body.rows.push(row)
+                                }
+                            }
+
+                        }
+
+                        // for (const edge of cell.edges.filter(e => e.source === cell)) {
+                        //     const sourceId = edge.value.getAttribute("sourceTd")
+                        //     const targetId = edge.value.getAttribute("targetTd")
+                        //
+                        //
+                        //     if (dict[sourceId].box_links) {
+                        //         dict[sourceId].box_links.push({
+                        //             link: {
+                        //                 typelink: 2,
+                        //                 box_id: `${edge.target.id}:${targetId}`
+                        //             }
+                        //         })
+                        //     } else {
+                        //         dict[sourceId].box_links = [{
+                        //             link: {
+                        //                 typelink: 2,
+                        //                 box_id: `${edge.target.id}:${targetId}`
+                        //             }
+                        //         }]
+                        //     }
+                        // }
+                        //
+                        // for (const edge of cell.edges.filter(e => e.target === cell)) {
+                        //     const sourceId = edge.value.getAttribute("sourceTd")
+                        //     const targetId = edge.value.getAttribute("targetTd")
+                        //
+                        //
+                        //     if (dict[targetId].box_links) {
+                        //         dict[targetId].box_links.push({
+                        //             link: {
+                        //                 typelink: 2,
+                        //                 box_id: `${edge.source.id}:${sourceId}`
+                        //             }
+                        //         })
+                        //     } else {
+                        //         dict[targetId].box_links = [{
+                        //             link: {
+                        //                 typelink: 2,
+                        //                 box_id: `${edge.source.id}:${sourceId}`
+                        //             }
+                        //         }]
+                        //     }
+                        // }
+
+
+                        graph.getChildEdges(parent).forEach(edge => {
+                            const sourceId = edge.value.getAttribute("sourceTd")
+                            const targetId = edge.value.getAttribute("targetTd")
+
+
+                            if (links_dict[targetId].box_links) {
+                                let tmp = links_dict[targetId].box_links.find(i => i.link.box_id.includes(sourceId))
+
+                                if (!tmp){
+                                    links_dict[targetId].box_links.push({
+                                        link: {
+                                            typelink: 2,
+                                            box_id: `${edge.source.id}:${sourceId}`
+                                        }
+                                    })
                                 }
 
-                                box.body.rows.push(row)
-                            }
-                        }
-
-                        for (const edge of cell.edges.filter(e => e.source === cell)) {
-                            const sourceId = edge.value.getAttribute("sourceTd")
-                            const targetId = edge.value.getAttribute("targetTd")
-
-
-                            if (dict[sourceId].box_links) {
-                                dict[sourceId].box_links.push({
-                                    link: {
-                                        typelink: 2,
-                                        box_id: `${edge.target.id}:${targetId}`
-                                    }
-                                })
                             } else {
-                                dict[sourceId].box_links = [{
-                                    link: {
-                                        typelink: 2,
-                                        box_id: `${edge.target.id}:${targetId}`
-                                    }
-                                }]
-                            }
-                        }
-
-                        for (const edge of cell.edges.filter(e => e.target === cell)) {
-                            const sourceId = edge.value.getAttribute("sourceTd")
-                            const targetId = edge.value.getAttribute("targetTd")
-
-
-                            if (dict[targetId].box_links) {
-                                dict[targetId].box_links.push({
-                                    link: {
-                                        typelink: 2,
-                                        box_id: `${edge.source.id}:${sourceId}`
-                                    }
-                                })
-                            } else {
-                                dict[targetId].box_links = [{
+                                links_dict[targetId].box_links = [{
                                     link: {
                                         typelink: 2,
                                         box_id: `${edge.source.id}:${sourceId}`
                                     }
                                 }]
                             }
-                        }
+
+                            if (links_dict[sourceId].box_links) {
+
+                                let tmp = links_dict[sourceId].box_links.find(i => i.link.box_id.includes(targetId))
+
+                                if (!tmp){
+                                    links_dict[sourceId].box_links.push({
+                                        link: {
+                                            typelink: 2,
+                                            box_id: `${edge.target.id}:${targetId}`
+                                        }
+                                    })
+                                }
+                            } else {
+                                links_dict[sourceId].box_links = [{
+                                    link: {
+                                        typelink: 2,
+                                        box_id: `${edge.target.id}:${targetId}`
+                                    }
+                                }]
+                            }
+                        })
 
                         json.boxes.push(box)
                     })
 
                     console.log(json)
+                    console.log(data)
                 }
 
 
@@ -1142,8 +1198,7 @@
             var x
             if (offset.x === 10) {
                 x = state.x;
-            }
-            else {
+            } else {
                 x = state.x + (offset.x + td.offsetWidth) * s
             }
             x = Math.min(state.x + state.width, Math.max(state.x, x));

@@ -1,12 +1,152 @@
-<!--
-  Copyright (c) 2006-2018, JGraph Ltd
-  
-  Hello, World! example for mxGraph. This example demonstrates using
-  a DOM node to create a graph and adding vertices and edges.
--->
-<html>
+<html lang="ru">
 <head>
-    <title>Hello, World! example for mxGraph</title>
+    <title>Scrollbars example for mxGraph</title>
+
+    <style type="text/css" media="screen">
+        ::-webkit-scrollbar {
+            width: 4px; /* width of the entire scrollbar */
+            height: 10px; /* width of the entire scrollbar */
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #E8EAF1;; /* color of the tracking area */
+            margin: 0 0 10px 0;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #B7BDD0; /* color of the scroll thumb */
+            border-radius: 20px; /* roundness of the scroll thumb */
+            /*border: 3px solid orange; !* creates padding around scroll thumb *!*/
+        }
+
+        table.erd {
+            width: 100%;
+            height: 100%;
+
+            font-size: 10pt;
+            border-color: black;
+            border-collapse: collapse;
+            overflow: auto;
+            cursor: move;
+            white-space: nowrap;
+
+            border: none !important;
+        }
+
+        table.erd > tbody tr:nth-child(odd) {
+            background-color: #F7F8FC;
+            border-bottom: 1px solid #DBDEEE;
+        }
+
+        table.erd > tbody tr:nth-child(even) {
+            /*background-color: #FFFFFF;*/
+            border-bottom: 1px solid #DBDEEE;
+
+        }
+
+        table.erd td {
+            border-color: black;
+            text-align: left;
+            color: black;
+
+            padding: 4px 0;
+
+        }
+
+        button {
+            position: absolute;
+        }
+
+        .typography-h2 {
+            /*font-family: Inter;*/
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: 19px;
+
+            color: #3F4864;
+        }
+
+        .collapsed-cell {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 5px;
+
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+            padding: 10px 10px 10px 20px;
+
+            /*border-radius: 30px;*/
+            background: transparent;
+            box-shadow: 1px 1px 2px 0px rgba(52, 65, 113, 0.10);
+        }
+
+        .collapsed-cell.typography-h2 {
+            color: #FFFFFF;
+        }
+
+        .cell-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+            padding: 10px 0;
+        }
+
+        .cell-header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 5px;
+
+            box-sizing: border-box;
+            width: 100%;
+            min-height: 44px;
+            padding: 10px 10px;
+
+            overflow: hidden;
+
+            flex: none;
+        }
+
+        .cell-header.typography-h2 {
+            color: #6680FF;
+        }
+
+
+        ul {
+            list-style: none;
+
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+
+            min-height: 48px;
+        }
+
+        li:nth-child(odd) {
+            background-color: #F7F8FC;
+            border-bottom: 1px solid #DBDEEE;
+        }
+
+        li:nth-child(even) {
+            background-color: #FFFFFF;
+            border-bottom: 1px solid #DBDEEE;
+
+        }
+    </style>
 
     <!-- Sets the basepath for the library if not in same directory -->
     <script type="text/javascript">
@@ -14,13 +154,12 @@
     </script>
 
     <!-- Loads and initializes the library -->
-    <script type="text/javascript" src="src/js/mxClient.js"></script>
+    <script type="text/javascript" src="./src/js/mxClient.js"></script>
+    <script type="text/javascript" src="./javascript/custom.js"></script>
 
-    <!-- Example code -->
+
+    <!-- Main code -->
     <script type="text/javascript">
-        // Program starts here. Creates a sample graph in the
-        // DOM node with the specified ID. This function is invoked
-        // from the onLoad event handler of the document (see below).
 
         function main(container) {
             // Checks if the browser is supported
@@ -28,143 +167,983 @@
                 // Displays an error message if the browser is not supported.
                 mxUtils.error('Browser is not supported!', 200, false);
             } else {
-                var data = {
-                    "boxes": [
-                        {
-                            "id": "box_rows_columns_example",
-                            "header": {
-                                "caption": "Test",
-                                "position": {
-                                    "top": 10,
-                                    "left": 10
-                                },
-                                "size": {
-                                    "width": 345,
-                                    "height": 523
-                                }
-                            },
-                            "body": {
-                                "rows": [
-                                    {
-                                        "columns": [
-                                            {
-                                                "item": {
-                                                    "box_id": "item1",
-                                                    "caption": "aaa",
-                                                    "box_links": [
-                                                        {
-                                                            "link": {
-                                                                "typelink": 1,
-                                                                "box_id": "box_json_example:item1"
-                                                            }
-                                                        }
-                                                    ]
-                                                }
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            "id": "box_json_example",
-                            "header": {
-                                "caption": "Test2",
-                                "position": {
-                                    "top": 10,
-                                    "left": 500
-                                },
-                                "size": {
-                                    "width": 345,
-                                    "height": 523
-                                }
-                            },
-                            "body": {
-                                "json": {
-                                    "type": "basket",
-                                    "beans": 47,
-                                    "apples": 7,
-                                    "oranges": 23,
-                                    "brand": "ConvertSimple",
-                                    "ratio": {
-                                        "box_id": "item1"
-                                    },
-                                    "fees": {
-                                        "cleaning": "$4.50",
-                                        "baking": "$27.30",
-                                        "commission": {
-                                            "box_links": [
-                                                {
-                                                    "link": {
-                                                        "typelink": 2,
-                                                        "box_id": "box_rows_columns_example:item1"
-                                                    }
-                                                }
-                                            ]
-                                        },
-                                        "descriptors": [
-                                            "clean",
-                                            "fresh",
-                                            "juicy",
-                                            "delicious"
-                                        ]
-                                    }
-                                }
-                            }
-                        }
-                    ]
+                // Must be disabled to compute positions inside the DOM tree of the cell label.
+                mxGraphView.prototype.optimizeVmlReflows = false;
+
+                // If connect preview is not moved away then getCellAt is used to detect the cell under
+                // the mouse if the mouse is over the preview shape in IE (no event transparency), ie.
+                // the built-in hit-detection of the HTML document will not be used in this case. This is
+                // not a problem here since the preview moves away from the mouse as soon as it connects
+                // to any given table row. This is because the edge connects to the outside of the row and
+                // is aligned to the grid during the preview.
+                mxConnectionHandler.prototype.movePreviewAway = false;
+
+                // Disables foreignObjects
+                mxClient.NO_FO = true;
+
+                // Enables move preview in HTML to appear on top
+                mxGraphHandler.prototype.htmlPreview = true;
+
+                // Enables connect icons to appear on top of HTML
+                mxConnectionHandler.prototype.moveIconFront = true;
+
+                // Defines an icon for creating new connections in the connection handler.
+                // This will automatically disable the highlighting of the source vertex.
+                mxConnectionHandler.prototype.connectImage = new mxImage('icons/connector.gif', 16, 16);
+
+
+                // Support for certain CSS styles in quirks mode
+                if (mxClient.IS_QUIRKS) {
+                    new mxDivResizer(container);
                 }
 
-
-                // Disables the built-in context menu
+                // Disables the context menu
                 mxEvent.disableContextMenu(container);
+
+                // Disables connections to invalid rows
+                mxConnectionHandler.prototype.isValidTarget = function (cell) {
+                    return this.currentTdNode != null;
+                };
 
                 // Creates the graph inside the given container
                 var graph = new mxGraph(container);
 
+                graph.applyCustomSetting();
+
+                //Collapsed/expanded icon override
+                graph.collapsedImage = new mxImage('../icons/arrow-right.svg', 24, 24);
+                graph.expandedImage = new mxImage('../icons/arrow-left.svg', 24, 24);
+
+
+                // Allows new connections to be made but do not allow existing
+                // connections to be changed for the sake of simplicity of this
+                // example
+                graph.setCellsDisconnectable(false);
+                graph.setAllowDanglingEdges(false);
+                graph.setCellsEditable(false);
+                graph.setConnectable(true);
+                graph.setPanning(true);
+                graph.centerZoom = false;
+
+                // Override folding to allow for tables
+                graph.isCellFoldable = function (cell, collapse) {
+                    return this.getModel().isVertex(cell);
+                };
+
+                // Overrides connectable state
+                graph.isCellConnectable = function (cell) {
+                    return !this.isCellCollapsed(cell);
+                };
+
+                // Enables HTML markup in all labels
+                graph.setHtmlLabels(true);
+
+                // Scroll events should not start moving the vertex
+                graph.cellRenderer.isLabelEvent = function (state, evt) {
+                    var source = mxEvent.getSource(evt);
+
+                    return state.text != null && source != state.text.node &&
+                        source != state.text.node.getElementsByTagName('div')[0];
+                };
+
+                // Adds scrollbars to the outermost div and keeps the
+                // DIV position and size the same as the vertex
+                var oldRedrawLabel = graph.cellRenderer.redrawLabel;
+                graph.cellRenderer.redrawLabel = function (state) {
+                    oldRedrawLabel.apply(this, arguments); // "supercall"
+                    var graph = state.view.graph;
+                    var model = graph.model;
+
+                    if (model.isVertex(state.cell) && state.text != null) {
+                        // Scrollbars are on the div
+                        var s = graph.view.scale;
+                        var div = state.text.node.getElementsByTagName('div')[2];
+
+                        if (div != null) {
+                            // Installs the handler for updating connected edges
+                            if (div.scrollHandler == null) {
+                                div.scrollHandler = true;
+
+                                var updateEdges = mxUtils.bind(this, function () {
+                                    var edgeCount = model.getEdgeCount(state.cell);
+
+                                    // Only updates edges to avoid update in DOM order
+                                    // for text label which would reset the scrollbar
+                                    for (var i = 0; i < edgeCount; i++) {
+                                        var edge = model.getEdgeAt(state.cell, i);
+                                        graph.view.invalidate(edge, true, false);
+                                        graph.view.validate(edge);
+                                    }
+                                });
+
+                                mxEvent.addListener(div, 'scroll', updateEdges);
+                                mxEvent.addListener(div, 'mouseup', updateEdges);
+                            }
+                        }
+                    }
+                };
+
+                // Adds a new function to update the currentRow based on the given event
+                // and return the DOM node for that row
+                graph.connectionHandler.updateTd = function (target) {
+                    while (target != null && target.nodeName != 'TD') {
+                        target = target.parentNode;
+                    }
+
+                    this.currentTd = null;
+
+                    // Checks if we're dealing with a row in the correct table
+                    if (getParentDiv(target) && target.getAttribute("box_id")) {
+                        this.currentTd = target.getAttribute("box_id");
+                    } else {
+                        target = null;
+                    }
+
+                    return target;
+                };
+
+                // Adds placement of the connect icon based on the mouse event target (row)
+                graph.connectionHandler.updateIcons = function (state, icons, me) {
+                    var target = me.getSource();
+                    target = this.updateTd(target);
+                    if (target != null && this.currentTd != null) {
+                        var div = getParentDiv(target)
+                        var offsetValues = getOffsetValues(target, div)
+                        var s = state.view.scale;
+
+                        icons[0].node.style.visibility = 'visible';
+                        icons[0].bounds.x = state.x + offsetValues.x * s + Math.min(state.width, target.offsetWidth * s) - this.icons[0].bounds.width - 2;
+                        icons[0].bounds.y = state.y - this.icons[0].bounds.height / 2 + (offsetValues.y + target.offsetHeight / 2 - div.scrollTop + div.offsetTop) * s;
+
+                        icons[0].bounds.width = 16 * s;
+                        icons[0].bounds.height = 16 * s;
+
+                        icons[0].redraw();
+
+                        this.currentTdNode = target;
+                    } else {
+                        icons[0].node.style.visibility = 'hidden';
+                    }
+                };
+
+                // Updates the targetRow in the preview edge State
+                var oldMouseMove = graph.connectionHandler.mouseMove;
+                graph.connectionHandler.mouseMove = function (sender, me) {
+                    if (this.edgeState != null) {
+                        this.currentTdNode = this.updateTd(me.getSource());
+                        if (this.currentTd != null) {
+                            this.edgeState.cell.value.setAttribute('targetTd', this.currentTd);
+                        } else {
+                            // this.edgeState.cell.value.setAttribute('targetTd', '0');
+                        }
+
+                        // Destroys icon to prevent event redirection via image in IE
+                        this.destroyIcons();
+                    }
+
+                    oldMouseMove.apply(this, arguments);
+                };
+
+                // Creates the edge state that may be used for preview
+                graph.connectionHandler.createEdgeState = function (me) {
+                    var relation = doc.createElement('Relation');
+                    relation.setAttribute('sourceTd', this.currentTd || '0');
+                    relation.setAttribute('targetTd', '0');
+
+                    var edge = this.createEdge(relation);
+                    var style = this.graph.getCellStyle(edge);
+                    var state = new mxCellState(this.graph.view, edge, style);
+
+                    // Stores the source row in the handler
+                    this.sourceTdNode = this.currentTdNode;
+
+                    return state;
+                };
+
+                // Overrides getLabel to return empty labels for edges and
+                // short markup for collapsed cells.
+                graph.getLabel = function (cell) {
+                    if (this.getModel().isVertex(cell)) {
+                        if (this.isCellCollapsed(cell)) {
+                            return cell.collapsedValue;
+                        } else {
+                            return cell.value;
+                        }
+                    } else {
+                        return '';
+                    }
+                };
+
+                // User objects (data) for the individual cells
+                var doc = mxUtils.createXmlDocument();
+
                 // Enables rubberband selection
                 new mxRubberband(graph);
+
+                // Enables key handling (eg. escape)
+                new mxKeyHandler(graph);
 
                 // Gets the default parent for inserting new cells. This
                 // is normally the first child of the root (ie. layer 0).
                 var parent = graph.getDefaultParent();
 
+                var links_dict = {}
                 // Adds cells to the model in a single step
                 graph.getModel().beginUpdate();
                 try {
-                    var v_list = []
+                    let data = {
+                        "boxes": [
+                            {
+                                "id": "box_rows_columns_example",
+                                "type": 1,
+                                "header": {
+                                    "caption": "Test",
+                                    "position": {
+                                        "top": 10,
+                                        "left": 100
+                                    },
+                                    "size": {
+                                        "width": 345,
+                                        "height": 523
+                                    }
+                                },
+                                "body": {
+                                    "rows": [
+                                        {
+                                            "columns": [
+                                                {
+                                                    "item": {
+                                                        "box_id": "item1",
+                                                        "caption": "aaa"
+                                                    }
+                                                },
+                                                {
+                                                    "rows": [
+                                                        {
+                                                            "columns": [
+                                                                {
+                                                                    "item": {
+                                                                        "box_id": "item2",
+                                                                        "caption": "222"
+                                                                    }
+                                                                }
+                                                            ]
 
-                    data.boxes.forEach((item, index) => {
-                        var vertex = graph.insertVertex(parent, item.id, item.header.caption, item.header.position.left,
-                            item.header.position.top, item.header.size.width, item.header.size.height);
+                                                        },
+                                                        {
+                                                            "columns": [
+                                                                {
+                                                                    "item": {
+                                                                        "box_id": "item3",
+                                                                        "caption": "333"
+                                                                    }
+                                                                }
+                                                            ]
 
-                        if (item.body.json) {
-                            console.log(item, "ss" )
+                                                        },
+                                                        {
+                                                            "columns": [
+                                                                {
+                                                                    "item": {
+                                                                        "box_id": "itemopopo",
+                                                                        "caption": "444"
+                                                                    }
+                                                                }
+                                                            ]
+
+                                                        },
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "columns": [
+                                                {
+                                                    "item": {
+                                                        "box_id": "item4",
+                                                        "caption": "ddd"
+                                                    }
+                                                },
+                                                {
+                                                    "item": {
+                                                        "caption": "eee"
+                                                    }
+                                                },
+                                                {
+                                                    "rows": [
+                                                        {
+                                                            "columns": [
+                                                                {
+                                                                    "item": {
+                                                                        "box_id": "itemqw",
+                                                                        "caption": "222"
+                                                                    }
+                                                                }
+                                                            ]
+
+                                                        },
+                                                        {
+                                                            "columns": [
+                                                                {
+                                                                    "item": {
+                                                                        "box_id": "itemer",
+                                                                        "caption": "333"
+                                                                    }
+                                                                }
+                                                            ]
+
+                                                        },
+                                                        {
+                                                            "columns": [
+                                                                {
+                                                                    "item": {
+                                                                        "box_id": "itemty",
+                                                                        "caption": "444"
+                                                                    }
+                                                                }
+                                                            ]
+
+                                                        },
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "columns": [
+                                                {
+                                                    "item": {
+                                                        "box_id": "item7",
+                                                        "caption": "ggg"
+                                                    }
+                                                },
+                                                {
+                                                    "item": {
+                                                        "caption": "hhh"
+                                                    }
+                                                },
+                                                {
+                                                    "item": {
+                                                        "box_id": "item9",
+                                                        "caption": "kkk"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "id": "box_json_example",
+                                "type": 2,
+                                "header": {
+                                    "caption": "Test2",
+                                    "position": {
+                                        "top": 10,
+                                        "left": 600
+                                    },
+                                    "size": {
+                                        "width": 345,
+                                        "height": 523
+                                    }
+                                },
+                                "body": {
+                                    "json": {
+                                        "type": "basket",
+                                        "beans": 47,
+                                        "apples": 7,
+                                        "oranges": 23,
+                                        "brand": "ConvertSimple",
+                                        "ratio": {
+                                            "box_id": "itemratio",
+                                            "box_links": [
+                                                {
+                                                    "link": {
+                                                        "typelink": 1,
+                                                        "box_id": "box_rows_columns_example:item1"
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        "fees": {
+                                            "cleaning": "$4.50",
+                                            "baking": "$27.30",
+                                            "commission": {
+                                                "box_id": "itemcapy",
+                                                "box_links": [
+                                                    {
+                                                        "link": {
+                                                            "typelink": 2,
+                                                            "box_id": "box_rows_columns_example:item1"
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            "descriptors": [
+                                                "clean",
+                                                "fresh",
+                                                "juicy",
+                                                "delicious"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+
+                    data.boxes.map(c => {
+
+                        let v = graph.insertVertex(parent, null, '', c.header.position.left, c.header.position.top, c.header.size.width, c.header.size.height);
+                        v.type = c.type;
+                        v.caption = c.header.caption;
+                        v.body = c.body;
+                        v.id = c.id;
+                        v.geometry.alternateBounds = new mxRectangle(0, 0, c.header.size.width, 44);
+                        if (c.body.rows) {
+                            v.value = createTableHTML(v)
+                        } else if (c.body.json) {
+                            v.value = createListHTML(v)
+                        }
+                        v.collapsedValue = createCollapsedTableHTML(v)
+
+                    })
+
+                    var vertices = graph.getChildVertices(parent);
+
+                    Object.keys(links_dict).forEach(k => {
+
+                        if (links_dict[k].box_links) {
+
+                            links_dict[k].box_links.forEach(link => {
+                                var relation = doc.createElement('Relation');
+                                relation.setAttribute('sourceTd', k);
+                                relation.setAttribute('targetTd', link.link.box_id.split(":")[1]);
+
+                                var e = graph.insertEdge(parent, null, relation, vertices.find(v => v.id === links_dict[k].id),
+                                    vertices.find(v => v.id === link.link.box_id.split(":")[0]));
+                                e.type = link.link.typelink;
+
+                            })
                         }
                     })
 
-
-                    // var v1 = graph.insertVertex(parent, null, 'Hello,', 20, 20, 80, 30);
-                    // var v2 = graph.insertVertex(parent, null, 'World!', 200, 150, 80, 30);
-                    // var e1 = graph.insertEdge(parent, null, '', v1, v2);
                 } finally {
                     // Updates the display
                     graph.getModel().endUpdate();
                 }
+
+                function createCollapsedTableHTML(cell) {
+                    // const table = document.createElement("table")
+                    // table.setAttribute("style", "overflow:hidden;")
+                    // table.setAttribute("width", "100%")
+                    // table.setAttribute("height", "100%")
+                    // table.setAttribute("border", "1")
+                    // table.setAttribute("cellpadding", "4")
+                    // table.setAttribute("class", "title")
+                    // const tbody = document.createElement("tbody")
+                    // const tr = document.createElement("tr")
+                    // const th = document.createElement("th")
+                    // th.innerText = cell.caption
+                    //
+                    // tr.appendChild(th)
+                    // tbody.appendChild(tr)
+                    // table.appendChild(tbody)
+                    //
+                    // return table
+
+                    const collapsedCell = document.createElement("div")
+                    collapsedCell.setAttribute("class", "collapsed-cell typography-h2")
+                    collapsedCell.innerText = cell.caption
+
+                    return collapsedCell
+
+                }
+
+                function createTableHTML(cell) {
+                    const container = document.createElement("div")
+                    container.setAttribute("class", "cell-container")
+
+                    // const tableHeader = createCollapsedTableHTML(cell)
+
+                    const cellHeader = document.createElement("span")
+                    cellHeader.setAttribute("class", "cell-header typography-h2")
+                    cellHeader.innerHTML = cell.caption
+
+
+                    const div = document.createElement("div")
+                    div.setAttribute("style", 'box-sizing:border-box;overflow:auto;cursor:default;top:44px;bottom:0px;position:absolute;width: calc(100% - 4px);height: calc(100% - 44px);padding: 0 6px 10px 10px;')
+                    const tableBody = document.createElement("table")
+                    tableBody.setAttribute("class", "erd")
+
+                    const tbody = document.createElement("tbody")
+
+                    cell.body.rows.forEach(row => {
+                        const tr = document.createElement("tr")
+                        row.columns.forEach(column => {
+
+                            if (column.rows) {
+                                const td2 = document.createElement("td")
+                                const tableBody2 = document.createElement("table")
+                                tableBody2.setAttribute("width", "100%")
+                                tableBody2.setAttribute("height", "100%")
+                                tableBody2.setAttribute("border", "1")
+                                tableBody2.setAttribute("class", "erd")
+
+                                const tbody2 = document.createElement("tbody")
+
+                                column.rows.forEach(r => {
+                                    const tr2 = document.createElement("tr")
+
+                                    r.columns.forEach(c => {
+
+                                        const td2 = document.createElement("td")
+
+                                        if (c.item.box_id) {
+                                            td2.setAttribute("box_id", c.item.box_id)
+                                            links_dict[c.item.box_id] = c.item
+                                            links_dict[c.item.box_id].id = cell.id
+                                        }
+                                        td2.innerText = c.item.caption
+                                        tr2.appendChild(td2)
+
+
+                                    })
+
+                                    tbody2.appendChild(tr2)
+
+                                })
+                                tableBody2.appendChild(tbody2)
+                                td2.appendChild(tableBody2)
+                                tr.appendChild(td2)
+                            } else {
+                                const td = document.createElement("td")
+
+                                if (column.item.box_id) {
+                                    td.setAttribute("box_id", column.item.box_id)
+                                    links_dict[column.item.box_id] = column.item
+                                    links_dict[column.item.box_id].id = cell.id
+
+                                }
+
+                                td.innerText = column.item.caption
+                                tr.appendChild(td)
+                            }
+
+                        })
+                        tbody.appendChild(tr)
+                    })
+
+                    tableBody.appendChild(tbody)
+                    div.appendChild(tableBody)
+                    container.appendChild(cellHeader)
+                    container.appendChild(div)
+
+                    return container.innerHTML
+                }
+
+                function createListHTML(cell) {
+                    const container = document.createElement("div")
+                    container.setAttribute("class", "cell-container")
+
+
+                    const cellHeader = document.createElement("span")
+                    cellHeader.setAttribute("class", "cell-header typography-h2")
+                    cellHeader.innerHTML = cell.caption
+
+
+                    const div = document.createElement("div")
+                    div.setAttribute("style", 'box-sizing:border-box;overflow:auto;cursor:default;top:44px;bottom:0px;position:absolute;width: calc(100% - 4px);height: calc(100% - 44px);padding: 0 6px 10px 10px;')
+                    const ul = document.createElement("table")
+                    ul.setAttribute("class", "erd")
+
+                    const tBody = document.createElement("tbody")
+
+                    let cellHtml = "";
+                    Object.keys(cell.body.json).forEach(key => {
+                        cellHtml += drawJson(key, cell.body.json[key], 0, "", links_dict, cell.id);
+                    })
+
+                    // cell.body.rows.forEach(row => {
+                    //     const tr = document.createElement("tr")
+                    //     row.columns.forEach(column => {
+                    //
+                    //         if (column.rows) {
+                    //             const td2 = document.createElement("td")
+                    //             const tableBody2 = document.createElement("table")
+                    //             tableBody2.setAttribute("width", "100%")
+                    //             tableBody2.setAttribute("height", "100%")
+                    //             tableBody2.setAttribute("border", "1")
+                    //             tableBody2.setAttribute("cellpadding", "4")
+                    //             tableBody2.setAttribute("class", "erd")
+                    //
+                    //             const tbody2 = document.createElement("tbody")
+                    //
+                    //             column.rows.forEach(r => {
+                    //                 const tr2 = document.createElement("tr")
+                    //
+                    //                 r.columns.forEach(c => {
+                    //                     const td2 = document.createElement("td")
+                    //                     td2.setAttribute("box_id", c.item.box_id)
+                    //                     td2.innerText = c.item.caption
+                    //                     tr2.appendChild(td2)
+                    //                 })
+                    //
+                    //                 tbody2.appendChild(tr2)
+                    //
+                    //             })
+                    //             tableBody2.appendChild(tbody2)
+                    //             td2.appendChild(tableBody2)
+                    //             tr.appendChild(td2)
+                    //         }
+                    //         else {
+                    //             const td = document.createElement("td")
+                    //             td.setAttribute("box_id", column.item.box_id)
+                    //             td.innerText = column.item.caption
+                    //             tr.appendChild(td)
+                    //         }
+                    //
+                    //     })
+                    //     tbody.appendChild(tr)
+                    // })
+                    tBody.innerHTML = cellHtml;
+                    ul.appendChild(tBody)
+                    div.appendChild(ul)
+                    container.appendChild(cellHeader)
+                    container.appendChild(div)
+
+                    return container.innerHTML
+                }
+
+
+                var btn1 = mxUtils.button('+', function () {
+                    graph.zoomIn();
+                });
+                btn1.style.marginLeft = '20px';
+
+                document.body.appendChild(btn1);
+                document.body.appendChild(mxUtils.button('-', function () {
+                    graph.zoomOut();
+                }));
+
+
+                document.getElementById("save_button").onclick = () => {
+                    var encoder = new mxCodec();
+                    var node = encoder.encode(graph.getModel());
+                    localStorage.setItem("graph", JSON.stringify(mxUtils.getXml(node)));
+                };
+
+                document.getElementById("log_button").onclick = () => {
+                    const dict = {}
+                    const json = new Object()
+                    json.boxes = []
+                    const arrayCells = graph.getChildVertices(graph.defaultParent)
+
+                    arrayCells.forEach(cell => {
+                        const box = new Object()
+                        box.id = cell.id
+                        box.header = new Object()
+                        box.header.position = new Object()
+                        box.header.size = new Object()
+                        box.header.position.left = cell.geometry.x
+                        box.header.position.top = cell.geometry.y
+                        box.header.size.width = cell.geometry.width
+                        box.header.size.height = cell.geometry.height
+
+                        const tmpDiv = document.createElement("div")
+                        tmpDiv.innerHTML = cell.value
+
+                        box.header.caption = tmpDiv.querySelector("span.cell-header").innerText
+
+
+                        if (tmpDiv.querySelector("table.erd> tbody").children.length > 0) {
+                            box.body = new Object()
+                            box.body.rows = []
+                            for (const tr of tmpDiv.querySelector("table.erd> tbody").children) {
+                                const row = new Object()
+                                row.columns = []
+
+                                for (const td of tr.children) {
+                                    const column = recursiveRows(td, dict)
+
+                                    row.columns.push(column)
+                                }
+
+                                box.body.rows.push(row)
+                            }
+                        }
+
+                        for (const edge of cell.edges.filter(e => e.source === cell)) {
+                            const sourceId = edge.value.getAttribute("sourceTd")
+                            const targetId = edge.value.getAttribute("targetTd")
+
+
+                            if (dict[sourceId].box_links) {
+                                dict[sourceId].box_links.push({
+                                    link: {
+                                        typelink: 2,
+                                        box_id: `${edge.target.id}:${targetId}`
+                                    }
+                                })
+                            } else {
+                                dict[sourceId].box_links = [{
+                                    link: {
+                                        typelink: 2,
+                                        box_id: `${edge.target.id}:${targetId}`
+                                    }
+                                }]
+                            }
+                        }
+
+                        for (const edge of cell.edges.filter(e => e.target === cell)) {
+                            const sourceId = edge.value.getAttribute("sourceTd")
+                            const targetId = edge.value.getAttribute("targetTd")
+
+
+                            if (dict[targetId].box_links) {
+                                dict[targetId].box_links.push({
+                                    link: {
+                                        typelink: 2,
+                                        box_id: `${edge.source.id}:${sourceId}`
+                                    }
+                                })
+                            } else {
+                                dict[targetId].box_links = [{
+                                    link: {
+                                        typelink: 2,
+                                        box_id: `${edge.source.id}:${sourceId}`
+                                    }
+                                }]
+                            }
+                        }
+
+                        json.boxes.push(box)
+                    })
+
+                    console.log(json)
+                }
+
+
+                function recursiveRows(data, dict, result = []) {
+
+                    if (data.children.length > 0 && data.children[0].tagName === 'TABLE') {
+                        if (data.children[0].querySelector("table.erd> tbody").children.length > 0) {
+                            const rows = []
+
+                            for (const tr of data.children[0].querySelector("table.erd> tbody").children) {
+                                const row = new Object()
+                                row.columns = []
+
+                                for (const td of tr.children) {
+                                    const column = recursiveRows(td, dict)
+
+                                    row.columns.push(column)
+                                }
+
+                                rows.push(row)
+                            }
+
+                            return rows
+                        }
+                    } else {
+                        const column = new Object()
+                        column.item = new Object()
+                        column.item.caption = data.innerText
+                        column.item.box_id = data.getAttribute("box_id")
+
+                        dict[column.item.box_id] = column.item
+
+                        return column
+                    }
+                }
             }
         };
+
+        // Implements a special perimeter for table rows inside the table markup
+        mxGraphView.prototype.updateFloatingTerminalPoint = function (edge, start, end, source) {
+            var next = this.getNextPoint(edge, end, source);
+            var div = start.text.node.getElementsByTagName('div')[2];
+
+            var x = start.x;
+            var y = start.getCenterY();
+
+
+            if (div != null) {
+                y = start.getCenterY() - div.scrollTop;
+
+                if (mxUtils.isNode(edge.cell.value) && !this.graph.isCellCollapsed(start.cell)) {
+                    var attr = (source) ? 'sourceTd' : 'targetTd';
+                    var box_id = edge.cell.value.getAttribute(attr);
+
+                    // HTML labels contain an outer table which is built-in
+                    var td = div.querySelectorAll(`[box_id="${box_id}"]`)[0]
+
+                    // Gets vertical center of source or target row
+                    if (td != null) {
+                        y = getTdY(start, td);
+                        x = getTdX(start, td);
+                    }
+                }
+
+                // Checks on which side of the terminal to leave
+                // if (next.x > x + start.width / 2) {
+                //     x += start.width;
+                // }
+
+                // Keeps vertical coordinate inside start
+                var offsetTop = parseInt(div.style.top) * start.view.scale;
+                y = Math.min(start.y + start.height, Math.max(start.y + offsetTop, y));
+
+                // Updates the vertical position of the nearest point if we're not
+                // dealing with a connection preview, in which case either the
+                // edgeState or the absolutePoints are null
+                if (edge != null && edge.absolutePoints != null) {
+                    next.y = y;
+                }
+            }
+
+            edge.setAbsoluteTerminalPoint(new mxPoint(x, y), source);
+
+            // Routes multiple incoming edges along common waypoints if
+            // the edges have a common target row
+            if (source && mxUtils.isNode(edge.cell.value) && start != null && end != null) {
+                var edges = this.graph.getEdgesBetween(start.cell, end.cell, true);
+                var tmp = [];
+
+                // Filters the edges with the same source row
+                var row = edge.cell.value.getAttribute('targetTd');
+
+                for (var i = 0; i < edges.length; i++) {
+                    if (mxUtils.isNode(edges[i].value) &&
+                        edges[i].value.getAttribute('targetTd') == row) {
+                        tmp.push(edges[i]);
+                    }
+                }
+
+                edges = tmp;
+
+                if (edges.length > 1 && edge.cell == edges[edges.length - 1]) {
+                    // Finds the vertical center
+                    var states = [];
+                    var y = 0;
+
+                    for (var i = 0; i < edges.length; i++) {
+                        states[i] = this.getState(edges[i]);
+                        y += states[i].absolutePoints[0].y;
+                    }
+
+                    y /= edges.length;
+
+                    for (var i = 0; i < states.length; i++) {
+                        var x = states[i].absolutePoints[1].x;
+
+                        if (states[i].absolutePoints.length < 5) {
+                            states[i].absolutePoints.splice(2, 0, new mxPoint(x, y));
+                        } else {
+                            states[i].absolutePoints[2] = new mxPoint(x, y);
+                        }
+
+                        // Must redraw the previous edges with the changed point
+                        if (i < states.length - 1) {
+                            this.graph.cellRenderer.redraw(states[i]);
+                        }
+                    }
+                }
+            }
+        };
+
+        // Defines global helper function to get y-coordinate for a given cell state and row
+        const getTdY = function (state, td) {
+            var s = state.view.scale;
+            var div = getParentDiv(td);
+
+            let offset = getOffsetValues(td, div)
+
+            var y = state.y + (offset.y + td.offsetHeight / 2 - div.scrollTop + div.offsetTop) * s;
+            y = Math.min(state.y + state.height, Math.max(state.y + div.offsetTop * s, y));
+
+            return y;
+        };
+
+        const getTdX = function (state, td) {
+            var s = state.view.scale;
+            var div = getParentDiv(td);
+
+            let offset = getOffsetValues(td, div)
+
+            var x
+            if (offset.x === 10) {
+                x = state.x;
+            }
+            else {
+                x = state.x + (offset.x + td.offsetWidth) * s
+            }
+            x = Math.min(state.x + state.width, Math.max(state.x, x));
+
+            return x;
+        };
+
+        const getParentDiv = function (target) {
+            while (target != null && target.nodeName != 'DIV') {
+                target = target.parentNode;
+            }
+            return target
+        }
+
+        const getOffsetValues = function (elem, parent) {
+            let x = 0;
+            let y = 0;
+            let elemTmp = elem;
+
+            while (elemTmp !== parent) {
+                x += elemTmp.offsetLeft;
+                y += elemTmp.offsetTop;
+
+                elemTmp = elemTmp.offsetParent;
+            }
+
+            return {x: x, y: y}
+        }
+
+        // Рекурсивная функция генерации DOM по JSON
+        const drawJson = function (key, data, level = 0, html = "", links_dict, cell_id) {
+            if (typeof (data) === "object") {
+
+                if (data.box_id) {
+                    html += `<tr><td box_id=${data.box_id} ><span style="margin-left: calc(10px * ${level})">${key}:</span></td></tr>`
+                    links_dict[data.box_id] = data
+                    links_dict[data.box_id].id = cell_id
+
+                } else {
+                    html += `<tr><td><span style="margin-left: calc(10px * ${level})">${key}:</span></td></tr>`
+
+                }
+                Object.keys(data).forEach(k => {
+                    if (k !== "box_links" && k !== "box_id" && k !== "id")
+                        html += drawJson(k, data[k], level + 1, "", links_dict, cell_id)
+                })
+                return html
+            } else {
+                return `<tr><td><span style="margin-left: calc(10px * ${level})">${key}:${data}</span></td></tr>`
+            }
+        }
     </script>
 </head>
 
 <!-- Page passes the container for the graph to the program -->
 <body onload="main(document.getElementById('graphContainer'))">
 
-<!-- Creates a container for the graph with a grid wallpaper -->
-
+<!-- Creates a container for the graph with a grid wallpaper. Width, height and cursor in the style are for IE only -->
 <div id="graphContainer"
-     style="position:relative;overflow:hidden;width:100vw;height:100vh;cursor:default;">
-
+     style="cursor:default;position:absolute;top:30px;left:0;bottom:0;right:0;">
 </div>
+
+<button style="top: 500px" id="log_button">
+    Log JSON
+</button>
+
+<button style="top: 550px" id="save_button">
+    Save
+</button>
 
 </body>
 </html>

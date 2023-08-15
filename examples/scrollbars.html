@@ -688,7 +688,8 @@
                                 relation.setAttribute('sourceTd', k);
                                 relation.setAttribute('targetTd', link.link.box_id.split(":")[1]);
 
-                                var e = graph.insertEdge(parent, null, relation, vertices.find(v => v.id === links_dict[k].id), vertices.find(v => v.id === link.link.box_id.split(":")[0]));
+                                var e = graph.insertEdge(parent, null, relation, vertices.find(v => v.id === links_dict[k].id),
+                                    vertices.find(v => v.id === link.link.box_id.split(":")[0]));
                                 e.type = link.link.typelink;
 
                             })

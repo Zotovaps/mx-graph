@@ -377,6 +377,10 @@
                     target = this.updateTd(target);
                     if (target != null && this.currentTd != null) {
                         var div = getParentDiv(target)
+                        var position = getPositionTd(target, div)
+
+                        console.log(position)
+
                         var offsetValues = getOffsetValues(target, div)
                         var s = state.view.scale;
 
@@ -535,6 +539,7 @@
                                                 },
                                                 {
                                                     "item": {
+                                                        "box_id": "item111",
                                                         "caption": "eee"
                                                     }
                                                 },
@@ -587,6 +592,7 @@
                                                 },
                                                 {
                                                     "item": {
+                                                        "box_id": "item11211",
                                                         "caption": "hhh"
                                                     }
                                                 },
@@ -695,7 +701,7 @@
                             })
                         }
                     })
-                    
+
                 } finally {
                     // Updates the display
                     graph.getModel().endUpdate();
@@ -1050,13 +1056,19 @@
                     if (td != null) {
                         y = getTdY(start, td);
                         x = getTdX(start, td);
+
+
+                        if (getPositionTd(td, div) === "both") {
+                            if (next.x > x + start.width / 2) {
+                                x += start.width;
+                            }
+                        }
+
                     }
                 }
 
                 // Checks on which side of the terminal to leave
-                // if (next.x > x + start.width / 2) {
-                //     x += start.width;
-                // }
+
 
                 // Keeps vertical coordinate inside start
                 var offsetTop = parseInt(div.style.top) * start.view.scale;
@@ -1142,8 +1154,7 @@
             var x
             if (offset.x === 10) {
                 x = state.x;
-            }
-            else {
+            } else {
                 x = state.x + (offset.x + td.offsetWidth) * s
             }
             x = Math.min(state.x + state.width, Math.max(state.x, x));
@@ -1157,6 +1168,34 @@
             }
             return target
         }
+
+            const getPositionTd = function (target, parent) {
+                let position = "middle";
+                while (target !== parent) {
+
+                    if (target.parentElement.tagName === "TR") {
+                        if (target.parentElement.childElementCount === 1) {
+                            position = "both"
+                        } else if ([...target.parentElement.childNodes].indexOf(target) === target.parentElement.childElementCount - 1) {
+                            if (position === "left") {
+                                return "middle"
+                            }
+                            position = "right";
+
+                        } else if ([...target.parentElement.childNodes].indexOf(target) === 0) {
+                            if (position === "right") {
+                                return "middle"
+                            }
+                            position = "left";
+
+                        } else
+                            return "middle";
+                    }
+
+                    target = target.parentElement
+                }
+                return position;
+            }
 
         const getOffsetValues = function (elem, parent) {
             let x = 0;
@@ -1213,6 +1252,10 @@
 <button style="top: 550px" id="save_button">
     Save
 </button>
+
+<div style="border: 1px solid red; width: 20px">
+    <div style="border: 1px solid green">gg</div>
+</div>
 
 </body>
 </html>
